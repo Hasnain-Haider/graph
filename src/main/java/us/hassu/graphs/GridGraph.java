@@ -12,7 +12,7 @@ public class GridGraph extends Graph<String> {
     int height;
 
 
-    public GridGraph(ArrayListMultimap<Node<String>, Node<String>> edges, List<List<Node<String>>> grid, int width, int height) {
+    public GridGraph(ArrayListMultimap<Node<String>, Edge<String>> edges, List<List<Node<String>>> grid, int width, int height) {
         super(edges);
         this.grid = grid;
         this.width = width;
@@ -87,7 +87,7 @@ public class GridGraph extends Graph<String> {
             int width1 = width != null ? width : DEFAULT_WIDTH;
             int height1 = height != null ? height : DEFAULT_HEIGHT;
             List<List<Node<String>>> nodes = createNodes(width1, height1);
-            ArrayListMultimap<Node<String>, Node<String>> edges;
+            ArrayListMultimap<Node<String>, Edge<String>> edges;
             if (createEdges) {
                 edges = createEdges(nodes, width, height);
             } else {
@@ -108,8 +108,8 @@ public class GridGraph extends Graph<String> {
             return grid;
         }
 
-        private ArrayListMultimap<Node<String>, Node<String>> createEdges(List<List<Node<String>>> nodes, int width, int height) {
-            ArrayListMultimap<Node<String>, Node<String>> edges = ArrayListMultimap.create();
+        private ArrayListMultimap<Node<String>, Edge<String>> createEdges(List<List<Node<String>>> nodes, int width, int height) {
+            ArrayListMultimap<Node<String>, Edge<String>> edges = ArrayListMultimap.create();
             for (int i = 0; i < width; i++) {
                 List<Node<String>> col = nodes.get(i);
                 for (int j = 0; j < height; j++) {
@@ -120,35 +120,35 @@ public class GridGraph extends Graph<String> {
             return edges;
         }
         private void addEdges(
-                ArrayListMultimap<Node<String>, Node<String>> edges,
+                ArrayListMultimap<Node<String>, Edge<String>> edges,
                 List<List<Node<String>>> nodes,
                 Node<String> node,
-                int i, int j) {
+                int i,
+                int j) {
             //up
             if (i > 0) {
                 List<Node<String>> row = nodes.get(i - 1);
                 Node<String> up = row.get(j);
-                edges.put(node, up);
+                edges.put(node, new Edge<>(node, up));
             }
 
             //down
             if (i < width - 1) {
                 Node<String> down = nodes.get(i + 1).get(j);
-                edges.put(node, down);
+                edges.put(node, new Edge<>(node, down));
             }
 
             //left
             if (j > 0) {
                 Node<String> left = nodes.get(i).get(j - 1);
-                edges.put(node, left);
+                edges.put(node, new Edge<>(node, left));
             }
 
             //right
             if (j < height - 1) {
                 Node<String> right = nodes.get(i).get(j + 1);
-                edges.put(node, right);
+                edges.put(node, new Edge<>(node, right));
             }
         }
-
     }
 }

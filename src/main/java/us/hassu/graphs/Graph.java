@@ -6,10 +6,11 @@ import java.util.*;
 
 class Graph <T>{
 
-    ArrayListMultimap<Node<T>, Node<T>> edges;
+//    ArrayListMultimap<Node<T>, Node<T>> edges;
+    ArrayListMultimap<Node<T>, Edge<T>> edges;
     boolean debug;
 
-    public Graph(ArrayListMultimap<Node<T>, Node<T>> edges) {
+    public Graph(ArrayListMultimap<Node<T>, Edge<T>> edges) {
         this.edges = edges;
     }
 
@@ -23,11 +24,15 @@ class Graph <T>{
     }
 
 
-    public void addEdge(Node<T> from, Node<T> to) {
-        edges.put(from, to);
+    public void addEdge(Edge<T> edge) {
+        edges.put(edge.getFrom(), edge);
     }
 
-    public List<Node<T>> getAdjacentNodes(Node<T> node) {
+    public void addEdge(Node<T> from, Node<T> to) {
+        edges.put(from, new Edge<>(from, to));
+    }
+
+    public List<Edge<T>> getAdjacentNodes(Node<T> node) {
         return edges.get(node);
     }
 
@@ -59,13 +64,14 @@ class Graph <T>{
         boolean found = false;
         while(!queue.isEmpty()) {
             Node<T> current = queue.removeFirst();
-            if(current.equals(end)) {
+            if (current.equals(end)) {
                 found = true;
                 break;
             }
 
-            List<Node<T>> neighbors = getAdjacentNodes(current);
-            for (Node<T> neighbor : neighbors) {
+            List<Edge<T>> neighbors = getAdjacentNodes(current);
+            for (Edge<T> neighborEdge : neighbors) {
+                Node<T> neighbor = neighborEdge.getTo();
                 if (!visited.contains(neighbor)) {
                     parents.put(neighbor, current);
                     queue.add(neighbor);
@@ -99,7 +105,8 @@ class Graph <T>{
                 debugLog("DFS Found end node " + end);
                 break;
             }
-            for (Node<T> neighbor : getAdjacentNodes(current)){
+            for (Edge<T> neighborEdge : getAdjacentNodes(current)){
+                Node<T> neighbor = neighborEdge.getTo();
                 if (!visited.contains(neighbor)) {
                     debugLog("DFS Discovered " + neighbor);
                     parents.put(neighbor, current);

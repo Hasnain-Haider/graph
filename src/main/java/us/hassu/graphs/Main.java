@@ -9,17 +9,14 @@ public class Main {
 
     static void t3 () {
         GridGraph.GridGraphBuilder builder = new GridGraph.GridGraphBuilder();
-        GridGraph gg = builder.width(200).height(300).createEdges(true).build();
+        GridGraph gg = builder.width(3).height(4).createEdges(true).build();
         Node<String> start = gg.getGrid().get(0).get(0);
-        Node<String> end = gg.getGrid().get(199).get(299);
+        Node<String> end = gg.getGrid().get(2).get(3);
 
+        gg.print();
         List<Node<String>> path = gg.bfs(start, end);
-        System.out.println("shortest path from " + start + " to " + end + " is:");
-        System.out.println(path);
-//        GridGraphGenerator gg = new GridGraphGenerator(2,3);
-//        Graph<String> graph = gg.generate();
-//        gg.print();
-//        graph.print();
+        log("shortest path from " + start + " to " + end + " is:");
+        log(path);
     }
 
     static void test1() {
@@ -38,7 +35,7 @@ public class Main {
         graph.addEdge(d, e);
 
         List<Node<String>> path = graph.bfs(a, e);
-        System.out.println("test1 path: " + path);
+        log("test1 path: " + path);
     }
 
     static void test2() {
@@ -71,10 +68,14 @@ public class Main {
         graph.addEdge(i, j);
         graph.addEdge(g, a);
 
-        System.out.println("test2 graph: " + graph);
+        log("test2 graph: " + graph);
         List<Node<String>> path = graph.bfs(a, j);
-        System.out.println("test2 bfs path: " + path);
+        log("test2 bfs path: " + path);
         path = graph.dfs(a, j);
-        System.out.println("test2 dfs path: " + path);
+        log("test2 dfs path: " + path);
+    }
+
+    static void log(Object o) {
+        System.out.println(o);
     }
 }
