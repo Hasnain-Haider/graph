@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        t3();
+        t4();
     }
 
     static void t3 () {
@@ -17,6 +17,21 @@ public class Main {
         List<Node<String>> path = gg.bfs(start, end);
         log("shortest path from " + start + " to " + end + " is:");
         log(path);
+    }
+
+    static void t4 () {
+        GridGraph.GridGraphBuilder builder = new GridGraph.GridGraphBuilder();
+        GridGraph gg = builder.width(3).height(4).createEdges(true).build();
+        Node<String> start = gg.getGrid().get(0).get(0);
+        Node<String> end = gg.getGrid().get(2).get(3);
+
+        gg.print();
+        BfsTrace<String> frames = gg.bfsTrace(start, end);
+        for (BfsFrame<String> frame: frames.getTrace()) {
+            log(frame);
+        }
+        log("shortest path from " + start + " to " + end + " is:");
+        log(frames.getPath());
     }
 
     static void test1() {

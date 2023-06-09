@@ -1,19 +1,16 @@
 package us.hassu.graphs;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Objects;
+import lombok.Getter;
+import lombok.Setter;
 
-class Node<T> {
+@Getter @Setter
+public class Node<T> {
+    @JsonProperty("id")
     private T data;
 
     public Node(T data) {
-        this.data = data;
-    }
-
-    public T getData() {
-        return data;
-    }
-
-    public void setData(T data) {
         this.data = data;
     }
 

@@ -86,6 +86,48 @@ class Graph <T>{
             return getPathFromParentMap(parents, end);
         }
     }
+    public BfsTrace<T> bfsTrace(Node<T> start, Node<T> end) {
+        BfsTrace<T> trace = new BfsTrace<>();
+
+        ArrayDeque<Node<T>> queue = new ArrayDeque<>();
+        Set<Node<T>> visited = new HashSet<>();
+        Map<Node<T>, Node<T>> parents = new HashMap<>();
+
+        queue.add(start);
+        visited.add(start);
+
+        boolean found = false;
+        while(!queue.isEmpty()) {
+            Set<Node<T>> newlyQueued = new HashSet<>();
+
+            Node<T> current = queue.removeFirst();
+            if (current.equals(end)) {
+                found = true;
+                break;
+            }
+
+            List<Edge<T>> neighbors = getAdjacentNodes(current);
+            for (Edge<T> neighborEdge : neighbors) {
+                Node<T> neighbor = neighborEdge.getTo();
+                if (!visited.contains(neighbor)) {
+                    parents.put(neighbor, current);
+                    queue.add(neighbor);
+                    visited.add(neighbor);
+                    newlyQueued.add(neighbor);
+                }
+            }
+            BfsFrame<T> frame = new BfsFrame<>(current, newlyQueued);
+            trace.getTrace().add(frame);
+        }
+
+        if(!found) {
+            throw new RuntimeException("No path found");
+        } else {
+            List<Node<T>> path = getPathFromParentMap(parents, end);
+            trace.setPath(path);
+            return trace;
+        }
+    }
 
     public List<Node<T>> dfs(Node<T> start, Node<T> end) {
         Set<Node<T>> visited = new HashSet<>();

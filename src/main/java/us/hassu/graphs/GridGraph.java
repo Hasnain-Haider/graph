@@ -1,10 +1,13 @@
 package us.hassu.graphs;
 
 import com.google.common.collect.ArrayListMultimap;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter @Setter
 public class GridGraph extends Graph<String> {
     List<List<Node<String>>> grid;
 
@@ -19,33 +22,8 @@ public class GridGraph extends Graph<String> {
         this.height = height;
     }
 
-
-    public List<List<Node<String>>> getGrid() {
-        return grid;
-    }
-
-    public void setGrid(List<List<Node<String>>> grid) {
-        this.grid = grid;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
     @Override
-    void print() {
+    public void print() {
         System.out.println("Grid:");
         for (List<Node<String>> row : grid) {
             System.out.println(row);
