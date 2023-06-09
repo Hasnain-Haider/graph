@@ -1,23 +1,22 @@
-package us.hassu.graphs;
+package us.hassu.graphs.graph;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Objects;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Objects;
+
 @Getter @Setter
 public class Node<T> {
-    @JsonProperty("id")
-    private T data;
+    private T id;
 
-    public Node(T data) {
-        this.data = data;
+    public Node(T id) {
+        this.id = Objects.requireNonNull(id, "Node id cannot be null");
     }
 
     @Override
     public String toString() {
         return "Node{" +
-                "data=" + data +
+                "id=" + id +
                 '}';
     }
 
@@ -26,11 +25,11 @@ public class Node<T> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Node<?> node = (Node<?>) o;
-        return Objects.equal(data, node.data);
+        return id.equals(node.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(data);
+        return Objects.hash(id);
     }
 }

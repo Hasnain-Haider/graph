@@ -1,16 +1,17 @@
-package us.hassu.graphs;
+package us.hassu.graphs.graph;
 
-import com.google.common.collect.ArrayListMultimap;
+import us.hassu.graphs.BfsFrame;
+import us.hassu.graphs.BfsTrace;
 
 import java.util.*;
 
-class Graph <T>{
+public class Graph<T, E extends Edge<T>, A extends AdjacencyList<T, E>> {
 
 //    ArrayListMultimap<Node<T>, Node<T>> edges;
-    ArrayListMultimap<Node<T>, Edge<T>> edges;
+    A edges;
     boolean debug;
 
-    public Graph(ArrayListMultimap<Node<T>, Edge<T>> edges) {
+    public Graph(A edges) {
         this.edges = edges;
     }
 
@@ -19,20 +20,20 @@ class Graph <T>{
     }
 
     public Graph(boolean debug) {
-        this.edges = ArrayListMultimap.create();
+//        this.edges = new AdjacencyList<>();
         this.debug = debug;
     }
 
 
-    public void addEdge(Edge<T> edge) {
+    public void addEdge(E edge) {
         edges.put(edge.getFrom(), edge);
     }
 
-    public void addEdge(Node<T> from, Node<T> to) {
-        edges.put(from, new Edge<>(from, to));
-    }
+//    public void addEdge(Node<T> from, Node<T> to) {
+//        edges.put(from, new Edge<>(from, to));
+//    }
 
-    public List<Edge<T>> getAdjacentNodes(Node<T> node) {
+    public List<E> getAdjacentNodes(Node<T> node) {
         return edges.get(node);
     }
 
@@ -46,7 +47,7 @@ class Graph <T>{
         return sb.toString();
     }
 
-    void print() {
+    public void print() {
         System.out.println("Edges:");
         for (Node<T> node : edges.keySet()) {
             System.out.println(node + " -> " + edges.get(node));
@@ -69,8 +70,8 @@ class Graph <T>{
                 break;
             }
 
-            List<Edge<T>> neighbors = getAdjacentNodes(current);
-            for (Edge<T> neighborEdge : neighbors) {
+            List<E> neighbors = getAdjacentNodes(current);
+            for (E neighborEdge : neighbors) {
                 Node<T> neighbor = neighborEdge.getTo();
                 if (!visited.contains(neighbor)) {
                     parents.put(neighbor, current);
@@ -106,7 +107,7 @@ class Graph <T>{
                 break;
             }
 
-            List<Edge<T>> neighbors = getAdjacentNodes(current);
+            List<E> neighbors = getAdjacentNodes(current);
             for (Edge<T> neighborEdge : neighbors) {
                 Node<T> neighbor = neighborEdge.getTo();
                 if (!visited.contains(neighbor)) {

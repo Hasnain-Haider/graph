@@ -2,6 +2,7 @@ package us.hassu.graphs;
 
 import lombok.Getter;
 import lombok.Setter;
+import us.hassu.graphs.graph.Node;
 
 import java.util.ArrayList;
 import java.util.List;
