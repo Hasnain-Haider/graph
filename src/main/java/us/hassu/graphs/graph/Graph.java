@@ -1,13 +1,12 @@
 package us.hassu.graphs.graph;
 
-import us.hassu.graphs.BfsFrame;
-import us.hassu.graphs.BfsTrace;
+import us.hassu.graphs.graph.trace.BfsFrame;
+import us.hassu.graphs.graph.trace.BfsTrace;
 
 import java.util.*;
 
 public class Graph<T, E extends Edge<T>, A extends AdjacencyList<T, E>> {
 
-//    ArrayListMultimap<Node<T>, Node<T>> edges;
     A edges;
     boolean debug;
 
@@ -20,18 +19,12 @@ public class Graph<T, E extends Edge<T>, A extends AdjacencyList<T, E>> {
     }
 
     public Graph(boolean debug) {
-//        this.edges = new AdjacencyList<>();
         this.debug = debug;
     }
-
 
     public void addEdge(E edge) {
         edges.put(edge.getFrom(), edge);
     }
-
-//    public void addEdge(Node<T> from, Node<T> to) {
-//        edges.put(from, new Edge<>(from, to));
-//    }
 
     public List<E> getAdjacentNodes(Node<T> node) {
         return edges.get(node);
@@ -87,6 +80,7 @@ public class Graph<T, E extends Edge<T>, A extends AdjacencyList<T, E>> {
             return getPathFromParentMap(parents, end);
         }
     }
+
     public BfsTrace<T> bfsTrace(Node<T> start, Node<T> end) {
         BfsTrace<T> trace = new BfsTrace<>();
 

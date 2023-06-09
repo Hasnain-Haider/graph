@@ -1,10 +1,11 @@
-package us.hassu.graphs;
+package us.hassu.graphs.graph.trace;
 
 import lombok.Getter;
 import lombok.Setter;
 import us.hassu.graphs.graph.Node;
 
 import java.util.Set;
+import java.util.StringJoiner;
 
 @Getter @Setter
 public class BfsFrame<T> {
@@ -16,11 +17,11 @@ public class BfsFrame<T> {
         this.newlyDiscovered = queue;
     }
 
-//    @Override
-//    public String toString() {
-//        return MoreObjects.toStringHelper(this)
-//                .add("node", node)
-//                .add("newlyQueued", newlyDiscovered)
-//                .toString();
-//    }
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", BfsFrame.class.getSimpleName() + "[", "]")
+                .add("node=" + node)
+                .add("newlyDiscovered=" + newlyDiscovered)
+                .toString();
+    }
 }
