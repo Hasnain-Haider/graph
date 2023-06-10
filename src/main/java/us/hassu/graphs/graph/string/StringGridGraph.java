@@ -88,7 +88,6 @@ public class StringGridGraph extends StringGraph {
             j = y = col = limited by width
          */
         private Grid<String> createNodesGrid(int width, int height) {
-//            List<List<Node<String>>> grid = new ArrayList<>(width);
             Grid<String> grid = new Grid<>(width);
             for (int i = 0; i < height; i++) {
                 List<Node<String>> col = new ArrayList<>();

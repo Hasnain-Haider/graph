@@ -5,7 +5,7 @@ import us.hassu.graphs.graph.Node;
 
 import java.util.List;
 
-public class StringAdjacencyList extends AdjacencyList<String, StringEdge> {
+public class StringAdjacencyList extends AdjacencyList<String, Node<String>, StringEdge> {
     @Override
     public List<StringEdge> put(Node<String> node, StringEdge edge) {
         return super.put(node, edge);

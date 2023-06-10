@@ -3,44 +3,16 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-<!--    <parent>-->
-<!--        <groupId>org.springframework.boot</groupId>-->
-<!--        <artifactId>spring-boot-starter-parent</artifactId>-->
-<!--        <version>3.1.0</version>-->
-<!--        <relativePath/> &lt;!&ndash; lookup parent from repository &ndash;&gt;-->
-<!--    </parent>-->
     <groupId>us.hassu</groupId>
     <artifactId>graphs</artifactId>
     <version>1.0-SNAPSHOT</version>
     <dependencies>
-<!--        <dependency>-->
-<!--            <groupId>com.google.guava</groupId>-->
-<!--            <artifactId>guava</artifactId>-->
-<!--            <version>32.0.0-jre</version>-->
-<!--        </dependency>-->
-
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-web</artifactId>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-tomcat</artifactId>-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-docker-compose</artifactId>-->
-<!--            <scope>runtime</scope>-->
-<!--            <optional>true</optional>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
             <version>1.18.28</version>
         </dependency>
-
     </dependencies>
 
     <properties>
@@ -48,5 +20,39 @@
         <maven.compiler.target>20</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+        <distributionManagement>
+            <snapshotRepository>
+                <id>artifact-registry</id>
+                <url>artifactregistry://us-west1-maven.pkg.dev/sturdy-index-386400/repo</url>
+            </snapshotRepository>
+            <repository>
+                <id>artifact-registry</id>
+                <url>artifactregistry://us-west1-maven.pkg.dev/sturdy-index-386400/repo</url>
+            </repository>
+        </distributionManagement>
+
+        <repositories>
+            <repository>
+                <id>artifact-registry</id>
+                <url>artifactregistry://us-west1-maven.pkg.dev/sturdy-index-386400/repo</url>
+                <releases>
+                    <enabled>true</enabled>
+                </releases>
+                <snapshots>
+                    <enabled>true</enabled>
+                </snapshots>
+            </repository>
+        </repositories>
+
+        <build>
+            <extensions>
+                <extension>
+                    <groupId>com.google.cloud.artifactregistry</groupId>
+                    <artifactId>artifactregistry-maven-wagon</artifactId>
+                    <version>2.2.0</version>
+                </extension>
+            </extensions>
+        </build>
 
 </project>

@@ -38,7 +38,6 @@ public class Main {
 
         gg.print();
 
-        gg.addEdge(new StringEdge(null, null));
         BfsTrace<String> frames = gg.bfsTrace(start, end);
         for (BfsFrame<String> frame: frames.getTrace()) {
             log(frame);

@@ -7,7 +7,6 @@ import us.hassu.graphs.graph.Node;
 import java.util.ArrayList;
 import java.util.List;
 
-
 // Shows which nodes bfs visited and in which order
 @Setter @Getter
 public class BfsTrace<T> {

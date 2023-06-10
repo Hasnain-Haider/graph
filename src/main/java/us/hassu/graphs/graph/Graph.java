@@ -5,7 +5,7 @@ import us.hassu.graphs.graph.trace.BfsTrace;
 
 import java.util.*;
 
-public class Graph<T, E extends Edge<T>, A extends AdjacencyList<T, E>> {
+public abstract class Graph<T, N extends Node<T>, E extends Edge<T>, A extends AdjacencyList<T, N, E>> {
 
     A edges;
     boolean debug;
@@ -20,10 +20,6 @@ public class Graph<T, E extends Edge<T>, A extends AdjacencyList<T, E>> {
 
     public Graph(boolean debug) {
         this.debug = debug;
-    }
-
-    public void addEdge(E edge) {
-        edges.put(edge.getFrom(), edge);
     }
 
     public List<E> getAdjacentNodes(Node<T> node) {

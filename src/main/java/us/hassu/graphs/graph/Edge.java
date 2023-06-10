@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.StringJoiner;
 
 @Getter
-public class Edge<T> {
+public abstract class Edge<T> {
     int weight;
     private Node<T> from;
     private Node<T> to;
