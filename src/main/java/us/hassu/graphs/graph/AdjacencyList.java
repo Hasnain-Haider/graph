@@ -11,4 +11,9 @@ public class AdjacencyList extends HashMap<Node, List<Edge>> {
         edges.add(edge);
         return edges;
     }
+    public List<Edge> put(Node from, Node to) {
+        List<Edge> edges = this.computeIfAbsent(from, k -> new ArrayList<>());
+        edges.add(new Edge(from, to));
+        return edges;
+    }
 }

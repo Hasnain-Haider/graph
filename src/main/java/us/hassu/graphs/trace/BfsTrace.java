@@ -13,4 +13,6 @@ public class BfsTrace {
     List<Node> path = new ArrayList<>();
 
     List<BfsFrame> trace = new ArrayList<>();
+
+    boolean foundPath = false;
 }

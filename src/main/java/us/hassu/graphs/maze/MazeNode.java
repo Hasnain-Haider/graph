@@ -12,9 +12,21 @@ public class MazeNode extends Node {
     @Getter @Setter
     Set<Boundary> boundaries;
 
+    @Getter @Setter
+    private int row;
+
+    @Getter @Setter
+    private int col;
+
     public MazeNode(String id) {
         super(id);
         this.boundaries = EnumSet.allOf(Boundary.class);
+    }
+
+    public MazeNode(String id, int row, int col) {
+        this(id);
+        this.row = row;
+        this.col = col;
     }
 
     @Override

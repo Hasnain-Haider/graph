@@ -111,13 +111,13 @@ public abstract class Graph {
             trace.getTrace().add(frame);
         }
 
-        if(!found) {
-            throw new RuntimeException("No path found");
-        } else {
+        trace.setFoundPath(found);
+        if(found) {
             List<Node> path = getPathFromParentMap(parents, end);
             trace.setPath(path);
             return trace;
         }
+        return trace;
     }
 
     public List<Node> dfs(Node start, Node end) {
@@ -167,7 +167,7 @@ public abstract class Graph {
         return path;
     }
 
-    private void debugLog(String msg) {
+    void debugLog(String msg) {
         if (debug) {
             System.out.println(msg);
         }
