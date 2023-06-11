@@ -1,4 +1,4 @@
-package us.hassu.graphs.graph.trace;
+package us.hassu.graphs.trace;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,8 +9,8 @@ import java.util.List;
 
 // Shows which nodes bfs visited and in which order
 @Setter @Getter
-public class BfsTrace<T> {
-    List<Node<T>> path = new ArrayList<>();
+public class BfsTrace {
+    List<Node> path = new ArrayList<>();
 
-    List<BfsFrame<T>> trace = new ArrayList<>();
+    List<BfsFrame> trace = new ArrayList<>();
 }

@@ -1,16 +1,16 @@
 package us.hassu.graphs.graph;
 
-import us.hassu.graphs.graph.trace.BfsFrame;
-import us.hassu.graphs.graph.trace.BfsTrace;
+import us.hassu.graphs.trace.BfsFrame;
+import us.hassu.graphs.trace.BfsTrace;
 
 import java.util.*;
 
-public abstract class Graph<T, N extends Node<T>, E extends Edge<T>, A extends AdjacencyList<T, N, E>> {
+public abstract class Graph {
 
-    A edges;
+    AdjacencyList edges;
     boolean debug;
 
-    public Graph(A edges) {
+    public Graph(AdjacencyList edges) {
         this.edges = edges;
     }
 
@@ -22,14 +22,14 @@ public abstract class Graph<T, N extends Node<T>, E extends Edge<T>, A extends A
         this.debug = debug;
     }
 
-    public List<E> getAdjacentNodes(Node<T> node) {
+    public List<Edge> getAdjacentNodes(Node node) {
         return edges.get(node);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (Node<T> node : edges.keySet()) {
+        for (Node node : edges.keySet()) {
             sb.append("{").append(node).append(" -> ")
                     .append(edges.get(node)).append("}//");
         }
@@ -38,30 +38,30 @@ public abstract class Graph<T, N extends Node<T>, E extends Edge<T>, A extends A
 
     public void print() {
         System.out.println("Edges:");
-        for (Node<T> node : edges.keySet()) {
+        for (Node node : edges.keySet()) {
             System.out.println(node + " -> " + edges.get(node));
         }
     }
 
-    public List<Node<T>> bfs(Node<T> start, Node<T> end) {
-        ArrayDeque<Node<T>> queue = new ArrayDeque<>();
-        Set<Node<T>> visited = new HashSet<>();
-        Map<Node<T>, Node<T>> parents = new HashMap<>();
+    public List<Node> bfs(Node start, Node end) {
+        ArrayDeque<Node> queue = new ArrayDeque<>();
+        Set<Node> visited = new HashSet<>();
+        Map<Node, Node> parents = new HashMap<>();
 
         queue.add(start);
         visited.add(start);
 
         boolean found = false;
         while(!queue.isEmpty()) {
-            Node<T> current = queue.removeFirst();
+            Node current = queue.removeFirst();
             if (current.equals(end)) {
                 found = true;
                 break;
             }
 
-            List<E> neighbors = getAdjacentNodes(current);
-            for (E neighborEdge : neighbors) {
-                Node<T> neighbor = neighborEdge.getTo();
+            List<Edge> neighbors = getAdjacentNodes(current);
+            for (Edge neighborEdge : neighbors) {
+                Node neighbor = neighborEdge.getTo();
                 if (!visited.contains(neighbor)) {
                     parents.put(neighbor, current);
                     queue.add(neighbor);
@@ -77,29 +77,29 @@ public abstract class Graph<T, N extends Node<T>, E extends Edge<T>, A extends A
         }
     }
 
-    public BfsTrace<T> bfsTrace(Node<T> start, Node<T> end) {
-        BfsTrace<T> trace = new BfsTrace<>();
+    public BfsTrace bfsTrace(Node start, Node end) {
+        BfsTrace trace = new BfsTrace();
 
-        ArrayDeque<Node<T>> queue = new ArrayDeque<>();
-        Set<Node<T>> visited = new HashSet<>();
-        Map<Node<T>, Node<T>> parents = new HashMap<>();
+        ArrayDeque<Node> queue = new ArrayDeque<>();
+        Set<Node> visited = new HashSet<>();
+        Map<Node, Node> parents = new HashMap<>();
 
         queue.add(start);
         visited.add(start);
 
         boolean found = false;
         while(!queue.isEmpty()) {
-            Set<Node<T>> newlyQueued = new HashSet<>();
+            Set<Node> newlyQueued = new HashSet<>();
 
-            Node<T> current = queue.removeFirst();
+            Node current = queue.removeFirst();
             if (current.equals(end)) {
                 found = true;
                 break;
             }
 
-            List<E> neighbors = getAdjacentNodes(current);
-            for (Edge<T> neighborEdge : neighbors) {
-                Node<T> neighbor = neighborEdge.getTo();
+            List<Edge> neighbors = getAdjacentNodes(current);
+            for (Edge neighborEdge : neighbors) {
+                Node neighbor = neighborEdge.getTo();
                 if (!visited.contains(neighbor)) {
                     parents.put(neighbor, current);
                     queue.add(neighbor);
@@ -107,27 +107,27 @@ public abstract class Graph<T, N extends Node<T>, E extends Edge<T>, A extends A
                     newlyQueued.add(neighbor);
                 }
             }
-            BfsFrame<T> frame = new BfsFrame<>(current, newlyQueued);
+            BfsFrame frame = new BfsFrame(current, newlyQueued);
             trace.getTrace().add(frame);
         }
 
         if(!found) {
             throw new RuntimeException("No path found");
         } else {
-            List<Node<T>> path = getPathFromParentMap(parents, end);
+            List<Node> path = getPathFromParentMap(parents, end);
             trace.setPath(path);
             return trace;
         }
     }
 
-    public List<Node<T>> dfs(Node<T> start, Node<T> end) {
-        Set<Node<T>> visited = new HashSet<>();
-        Stack<Node<T>> stack = new Stack<>();
-        Map<Node<T>, Node<T>> parents = new HashMap<>();
+    public List<Node> dfs(Node start, Node end) {
+        Set<Node> visited = new HashSet<>();
+        Stack<Node> stack = new Stack<>();
+        Map<Node, Node> parents = new HashMap<>();
         boolean found = false;
 
         debugLog("Starting DFS from " + start);
-        Node<T> current = start;
+        Node current = start;
         stack.push(current);
 
         while(!stack.isEmpty()) {
@@ -138,8 +138,8 @@ public abstract class Graph<T, N extends Node<T>, E extends Edge<T>, A extends A
                 debugLog("DFS Found end node " + end);
                 break;
             }
-            for (Edge<T> neighborEdge : getAdjacentNodes(current)){
-                Node<T> neighbor = neighborEdge.getTo();
+            for (Edge neighborEdge : getAdjacentNodes(current)){
+                Node neighbor = neighborEdge.getTo();
                 if (!visited.contains(neighbor)) {
                     debugLog("DFS Discovered " + neighbor);
                     parents.put(neighbor, current);
@@ -156,9 +156,9 @@ public abstract class Graph<T, N extends Node<T>, E extends Edge<T>, A extends A
         }
     }
 
-    private List<Node<T>> getPathFromParentMap(Map<Node<T>, Node<T>> parents, Node<T> end) {
-        List<Node<T>> path = new ArrayList<>();
-        Node<T> current = end;
+    private List<Node> getPathFromParentMap(Map<Node, Node> parents, Node end) {
+        List<Node> path = new ArrayList<>();
+        Node current = end;
         while (current != null) {
             path.add(current);
             current = parents.get(current);

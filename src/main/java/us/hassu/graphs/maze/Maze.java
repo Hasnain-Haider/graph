@@ -1,21 +1,26 @@
-package us.hassu.graphs.graph.string;
+package us.hassu.graphs.maze;
 
 import lombok.Getter;
 import lombok.Setter;
-import us.hassu.graphs.graph.Grid;
-import us.hassu.graphs.graph.Node;
+import us.hassu.graphs.graph.*;
+
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
-@Getter @Setter
-public class StringGridGraph extends StringGraph {
-    Grid<String> grid;
+import static us.hassu.graphs.maze.MazeNode.Boundary.BOTTOM;
+import static us.hassu.graphs.maze.MazeNode.Boundary.RIGHT;
+
+
+@Setter @Getter
+public class Maze extends Graph {
+    Grid grid;
     int width;
     int height;
 
 
-    public StringGridGraph(StringAdjacencyList edges, Grid<String> grid, int width, int height) {
+    public Maze(AdjacencyList edges, Grid grid, int width, int height) {
         super(edges);
         this.grid = grid;
         this.width = width;
@@ -25,7 +30,7 @@ public class StringGridGraph extends StringGraph {
     @Override
     public void print() {
         System.out.println("Grid:");
-        for (List<Node<String>> row : grid) {
+        for (List<MazeNode> row : grid) {
             System.out.println(row);
         }
         super.print();
@@ -61,17 +66,21 @@ public class StringGridGraph extends StringGraph {
 
         // build method to deal with outer class
         // to return outer instance
-        public StringGridGraph build() {
+        public Maze build() {
             int width1 = width != null ? width : DEFAULT_WIDTH;
             int height1 = height != null ? height : DEFAULT_HEIGHT;
-            Grid<String> nodes = createNodesGrid(width1, height1);
-            StringAdjacencyList edges;
+            if (height1 < 2 || width1 < 2) {
+                throw new IllegalArgumentException("Maze must be at least 2x2");
+            }
+            Grid nodes = createNodesGrid(width1, height1);
+            AdjacencyList edges;
             if (createEdges) {
                 edges = createEdges(nodes, width, height);
             } else {
-                edges = new StringAdjacencyList();
+                edges = new AdjacencyList();
             }
-            return new StringGridGraph(edges, nodes, width1, height1);
+            carve(nodes, edges, width1, height1);
+            return new Maze(edges, nodes, width1, height1);
         }
 
         /*
@@ -87,60 +96,75 @@ public class StringGridGraph extends StringGraph {
             i = x = row = limited by height
             j = y = col = limited by width
          */
-        private Grid<String> createNodesGrid(int width, int height) {
-            Grid<String> grid = new Grid<>(width);
+        private Grid createNodesGrid(int width, int height) {
+            Grid grid = new Grid(width);
             for (int i = 0; i < height; i++) {
-                List<Node<String>> col = new ArrayList<>();
+                List<MazeNode> col = new ArrayList<>();
                 grid.add(col);
                 for (int j = 0; j < width; j++) {
                     // create row
-                    col.add(new Node<>(i + "," + j));
+                    col.add(new MazeNode(i + "," + j));
                 }
             }
 
             return grid;
         }
 
-        private StringAdjacencyList createEdges(Grid<String> nodes, int width, int height) {
-            StringAdjacencyList adjacencyList = new StringAdjacencyList();
+        private AdjacencyList createEdges(Grid nodes, int width, int height) {
+            AdjacencyList adjacencyList = new AdjacencyList();
             for (int i = 0; i < height; i++) {
-                List<Node<String>> col = nodes.get(i);
+                List<MazeNode> col = nodes.get(i);
                 for (int j = 0; j < width; j++) {
-                    Node<String> node = col.get(j);
+                    Node node = col.get(j);
                     addEdges(adjacencyList, nodes, node, i, j);
                 }
             }
             return adjacencyList;
         }
+
+        private void carve(Grid grid, AdjacencyList edges, int width, int height) {
+            List<MazeNode> row1 = grid.get(0);
+            for (MazeNode node: row1) {
+                node.removeBoundary(RIGHT);
+            }
+            for (int i = 0; i < height; i++) {
+                grid.get(i).get(0).removeBoundary(BOTTOM);
+            }
+            if (width > 1 && height > 1) {
+                grid.get(0).get(0).removeBoundary(BOTTOM);
+                grid.get(0).get(0).removeBoundary(RIGHT);
+            }
+            Random random = new Random();
+//            Stack<Node> stack = new Stack<>();
+        }
         private void addEdges(
-                StringAdjacencyList edges,
-                Grid<String> nodes,
-                Node<String> node,
+                AdjacencyList edges,
+                Grid nodes,
+                Node node,
                 int row, int col) {
 
             //up
             if (row > 0) {
-                List<Node<String>> rowx = nodes.get(row - 1);
-                Node<String> up = rowx.get(col);
-                edges.put(node, new StringEdge(node, up));
+                Node up = nodes.get(row - 1).get(col);
+                edges.put(node, new Edge(node, up));
             }
 
             //down
             if (row < height - 1) {
-                Node<String> down = nodes.get(row + 1).get(col);
-                edges.put(node, new StringEdge(node, down));
+                Node down = nodes.get(row + 1).get(col);
+                edges.put(node, new Edge(node, down));
             }
 
             //left
             if (col > 0) {
-                Node<String> left = nodes.get(row).get(col - 1);
-                edges.put(node, new StringEdge(node, left));
+                Node left = nodes.get(row).get(col - 1);
+                edges.put(node, new Edge(node, left));
             }
 
             //right
             if (col < width - 1) {
-                Node<String> right = nodes.get(row).get(col + 1);
-                edges.put(node, new StringEdge(node, right));
+                Node right = nodes.get(row).get(col + 1);
+                edges.put(node, new Edge(node, right));
             }
         }
     }

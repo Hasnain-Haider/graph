@@ -1,4 +1,4 @@
-package us.hassu.graphs.graph.trace;
+package us.hassu.graphs.trace;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,11 +8,11 @@ import java.util.Set;
 import java.util.StringJoiner;
 
 @Getter @Setter
-public class BfsFrame<T> {
-    Node<T> node;
-    Set<Node<T>> newlyDiscovered;
+public class BfsFrame {
+    Node node;
+    Set<Node> newlyDiscovered;
 
-    public BfsFrame(Node<T> node, Set<Node<T>> queue) {
+    public BfsFrame(Node node, Set<Node> queue) {
         this.node = node;
         this.newlyDiscovered = queue;
     }
