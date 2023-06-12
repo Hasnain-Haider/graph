@@ -24,18 +24,18 @@
         <distributionManagement>
             <snapshotRepository>
                 <id>artifact-registry</id>
-                <url>artifactregistry://us-west1-maven.pkg.dev/sturdy-index-386400/repo</url>
+                <url>artifactregistry://us-west1-maven.pkg.dev/sturdy-index-386400/public</url>
             </snapshotRepository>
             <repository>
                 <id>artifact-registry</id>
-                <url>artifactregistry://us-west1-maven.pkg.dev/sturdy-index-386400/repo</url>
+                <url>artifactregistry://us-west1-maven.pkg.dev/sturdy-index-386400/public</url>
             </repository>
         </distributionManagement>
 
         <repositories>
             <repository>
                 <id>artifact-registry</id>
-                <url>artifactregistry://us-west1-maven.pkg.dev/sturdy-index-386400/repo</url>
+                <url>artifactregistry://us-west1-maven.pkg.dev/sturdy-index-386400/public</url>
                 <releases>
                     <enabled>true</enabled>
                 </releases>

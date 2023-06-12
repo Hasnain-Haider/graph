@@ -13,18 +13,20 @@ import static us.hassu.graphs.maze.MazeNode.Boundary.RIGHT;
 
 @Setter @Getter
 public class Maze extends Graph {
-
     // grid is technically not needed, but it helps with mental model
     Grid grid;
     int width;
     int height;
+    MazeNode start;
+    MazeNode end;
 
-
-    public Maze(AdjacencyList edges, Grid grid, int width, int height) {
+    public Maze(AdjacencyList edges, Grid grid, int width, int height, MazeNode start, MazeNode end) {
         super(edges);
         this.grid = grid;
         this.width = width;
         this.height = height;
+        this.start = start;
+        this.end = end;
     }
 
     @Override
@@ -47,6 +49,8 @@ public class Maze extends Graph {
 
         boolean createEdges;
 
+        boolean debug;
+
         private int DEFAULT_WIDTH = 2;
 
         private int DEFAULT_HEIGHT = 2;
@@ -59,6 +63,11 @@ public class Maze extends Graph {
 
         public Builder height(int height) {
             this.height = height;
+            return this;
+        }
+
+        public Builder debug(boolean debug) {
+            this.debug = debug;
             return this;
         }
 
@@ -79,8 +88,8 @@ public class Maze extends Graph {
             Grid nodes = createNodesGrid(width1, height1);
             AdjacencyList edges = createEdges(nodes, width, height);
             AdjacencyList mazeAdjacencyList = new AdjacencyList();
-            carve(nodes, edges, width1, height1, mazeAdjacencyList);
-            return new Maze(mazeAdjacencyList, nodes, width1, height1);
+            Pair<MazeNode, MazeNode> ingressEgress = carve(nodes, edges, width1, height1, mazeAdjacencyList);
+            return new Maze(mazeAdjacencyList, nodes, width1, height1, ingressEgress.getFirst(), ingressEgress.getSecond());
         }
 
         /*
@@ -123,7 +132,7 @@ public class Maze extends Graph {
         }
 
         // depth first maze generation algorithm
-        private void carve(Grid grid, AdjacencyList edges, int width, int height, AdjacencyList realAdjacencyList) {
+        private Pair<MazeNode, MazeNode> carve(Grid grid, AdjacencyList edges, int width, int height, AdjacencyList realAdjacencyList) {
             List<MazeNode> row1 = grid.get(0);
             Set<MazeNode> visited = new HashSet<>();
 
@@ -136,19 +145,19 @@ public class Maze extends Graph {
                 visited.add(grid.get(i).get(0));
             }
 
-            Random random = new Random(0L);
+            Random random = new Random();
             Stack<MazeNode> stack = new Stack<>();
 
             //starting position
             List<MazeNode> firstRow = grid.get(0);
-            MazeNode start = firstRow.get(random.nextInt(firstRow.size()));
+            MazeNode start = firstRow.get(random.nextInt(firstRow.size() - 1) + 1);
 //            System.out.println("start = " + start);
 
             stack.push(start);
             while (!stack.isEmpty()) {
                 MazeNode current = stack.peek();
                 visited.add(current);
-                System.out.println("current = " + current);
+                this.debugLog("current = " + current);
                 List<Edge> neighbors = edges.get(current);
                 List<MazeNode> unvisitedNeighbors = new ArrayList<>();
 
@@ -159,7 +168,7 @@ public class Maze extends Graph {
                     }
                 }
 
-                System.out.println("unvisitedNeighbors = " + unvisitedNeighbors);
+                this.debugLog("unvisitedNeighbors = " + unvisitedNeighbors);
 
                 if (unvisitedNeighbors.isEmpty()) {
                     stack.pop();
@@ -175,20 +184,20 @@ public class Maze extends Graph {
                         // same row
                         if (diffCol == 1) {
                             //neighbor is to the right
-                            System.out.println("move right");
-                            System.out.println("removing right boundary for current");
+                            this.debugLog("move right");
+                            this.debugLog("removing right boundary for current");
                             current.removeBoundary(RIGHT);
                         } else { // diffCol == -1
                             //neighbor is to the left
-                            System.out.println("move left");
-                            System.out.println("removing right boundary for neighbor");
+                            this.debugLog("move left");
+                            this.debugLog("removing right boundary for neighbor");
                             neighbor.removeBoundary(RIGHT);
                         }
                     } else if (diffRow == 1) {
                         //diffCol must be 0
                         //neighbor is below
-                        System.out.println("move down");
-                        System.out.println("removing bottom boundary for current");
+                        this.debugLog("move down");
+                        this.debugLog("removing bottom boundary for current");
                         current.removeBoundary(BOTTOM);
                     } else if (diffRow == -1) {
                         //diffCol must be 0
@@ -202,6 +211,12 @@ public class Maze extends Graph {
                     realAdjacencyList.put(neighbor, current);
                 }
             }
+
+            //create exit
+            List<MazeNode> lastRow = grid.get(height - 1);
+            MazeNode exit = lastRow.get(random.nextInt(lastRow.size() - 1) + 1);
+            exit.removeBoundary(BOTTOM);
+            return Pair.of(start, exit);
         }
         private void addEdges(
                 AdjacencyList edges,
@@ -231,6 +246,11 @@ public class Maze extends Graph {
             if (col < width - 1) {
                 Node right = nodes.get(row).get(col + 1);
                 edges.put(node, new Edge(node, right));
+            }
+        }
+        void debugLog(String s) {
+            if (debug) {
+                System.out.println(s);
             }
         }
     }
