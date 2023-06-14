@@ -7,7 +7,8 @@ import us.hassu.graphs.graph.Node;
 import java.util.Set;
 import java.util.StringJoiner;
 
-@Getter @Setter
+@Getter
+@Setter
 public class BfsFrame {
     Node node;
     Set<Node> newlyDiscovered;

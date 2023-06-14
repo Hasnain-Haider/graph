@@ -15,7 +15,8 @@ import java.util.stream.Collectors;
 public class GraphUtils {
 
     private static GraphUtils INSTANCE;
-    @Setter @Getter
+    @Setter
+    @Getter
     boolean debug;
 
     private GraphUtils(boolean debug) {
@@ -39,7 +40,7 @@ public class GraphUtils {
         visited.add(start);
 
         boolean found = false;
-        while(!queue.isEmpty()) {
+        while (!queue.isEmpty()) {
             Node current = queue.removeFirst();
             if (current.equals(end)) {
                 found = true;
@@ -57,7 +58,7 @@ public class GraphUtils {
             }
         }
 
-        if(!found) {
+        if (!found) {
             throw new RuntimeException("No path found");
         } else {
             return getPathFromParentMap(parents, end);
@@ -77,7 +78,7 @@ public class GraphUtils {
         visited.add(start);
 
         boolean found = false;
-        while(!queue.isEmpty()) {
+        while (!queue.isEmpty()) {
             Set<Node> newlyQueued = new HashSet<>();
 
             Node current = queue.removeFirst();
@@ -101,7 +102,7 @@ public class GraphUtils {
         }
 
         trace.setFoundPath(found);
-        if(found) {
+        if (found) {
             List<Node> path = getPathFromParentMap(parents, end);
             trace.setPath(path);
             return trace;
@@ -119,7 +120,7 @@ public class GraphUtils {
         Node current = start;
         stack.push(current);
 
-        while(!stack.isEmpty()) {
+        while (!stack.isEmpty()) {
             current = stack.pop();
             debugLog("DFS Searching " + current);
             if (current == end) {
@@ -216,6 +217,7 @@ public class GraphUtils {
                 .map(Edge::getTo)
                 .collect(Collectors.toSet());
     }
+
     private List<Node> getPathFromParentMap(Map<Node, Node> parents, Node end) {
         List<Node> path = new ArrayList<>();
         Node current = end;

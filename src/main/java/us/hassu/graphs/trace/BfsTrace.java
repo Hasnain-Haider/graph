@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Shows which nodes bfs visited and in which order
-@Setter @Getter
+@Setter
+@Getter
 public class BfsTrace {
     List<Node> path = new ArrayList<>();
 

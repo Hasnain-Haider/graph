@@ -1,8 +1,6 @@
 package us.hassu.graphs.graph;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Objects;
 
@@ -12,9 +10,11 @@ public class Node {
 
     Node() {
     }
+
     public Node(String id) {
         this.id = Objects.requireNonNull(id, "Node id cannot be null");
     }
+
     @Override
     public int hashCode() {
         return Objects.hash(id);

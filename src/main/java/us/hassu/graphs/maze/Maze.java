@@ -4,14 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 import us.hassu.graphs.graph.*;
 
-
 import java.util.*;
 
 import static us.hassu.graphs.maze.MazeNode.Boundary.BOTTOM;
 import static us.hassu.graphs.maze.MazeNode.Boundary.RIGHT;
 
 
-@Setter @Getter
+@Setter
+@Getter
 public class Maze extends Graph {
     // grid is technically not needed, but it helps with mental model
     Grid grid;
@@ -51,9 +51,9 @@ public class Maze extends Graph {
 
         boolean debug;
 
-        private int DEFAULT_WIDTH = 2;
+        private final int DEFAULT_WIDTH = 2;
 
-        private int DEFAULT_HEIGHT = 2;
+        private final int DEFAULT_HEIGHT = 2;
 
         // builder methods for setting property
         public Builder width(int width) {
@@ -135,7 +135,7 @@ public class Maze extends Graph {
             List<MazeNode> row1 = grid.get(0);
             Set<MazeNode> visited = new HashSet<>();
 
-            for (MazeNode node: row1) {
+            for (MazeNode node : row1) {
                 node.removeBoundary(RIGHT);
                 visited.add(node);
             }
@@ -160,7 +160,7 @@ public class Maze extends Graph {
                 List<Edge> neighbors = edges.getOrDefault(current, new ArrayList<>());
                 List<MazeNode> unvisitedNeighbors = new ArrayList<>();
 
-                for (Edge edge: neighbors) {
+                for (Edge edge : neighbors) {
                     MazeNode neighbor = (MazeNode) edge.getTo();
                     if (!visited.contains(neighbor)) {
                         unvisitedNeighbors.add(neighbor);
@@ -219,6 +219,7 @@ public class Maze extends Graph {
             exit.removeBoundary(BOTTOM);
             return Pair.of(start, exit);
         }
+
         private void addEdges(
                 AdjacencyList edges,
                 Grid nodes,
@@ -249,6 +250,7 @@ public class Maze extends Graph {
                 edges.put(node, new Edge(node, right));
             }
         }
+
         void debugLog(String s) {
             if (debug) {
                 System.out.println(s);

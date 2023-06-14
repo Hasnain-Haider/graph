@@ -3,15 +3,17 @@ package us.hassu.graphs.graph;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.*;
+import java.util.List;
 
 public abstract class Graph {
 
-    @Setter @Getter
+    @Setter
+    @Getter
     AdjacencyList adjacencyList;
 
     public Graph() {
     }
+
     public Graph(AdjacencyList adjacencyList) {
         this.adjacencyList = adjacencyList;
     }

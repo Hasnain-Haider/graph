@@ -9,13 +9,16 @@ import java.util.Set;
 import java.util.StringJoiner;
 
 public class MazeNode extends Node {
-    @Getter @Setter
+    @Getter
+    @Setter
     Set<Boundary> boundaries;
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private int row;
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private int col;
 
     public MazeNode(String id) {
@@ -45,5 +48,5 @@ public class MazeNode extends Node {
         boundaries.add(boundary);
     }
 
-    public enum Boundary { BOTTOM, RIGHT }
+    public enum Boundary {BOTTOM, RIGHT}
 }
