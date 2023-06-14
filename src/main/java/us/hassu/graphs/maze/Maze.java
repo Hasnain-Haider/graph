@@ -76,7 +76,6 @@ public class Maze extends Graph {
             return this;
         }
 
-
         // build method to deal with outer class
         // to return outer instance
         public Maze build() {
@@ -151,14 +150,14 @@ public class Maze extends Graph {
             //starting position
             List<MazeNode> firstRow = grid.get(0);
             MazeNode start = firstRow.get(random.nextInt(firstRow.size() - 1) + 1);
-//            System.out.println("start = " + start);
 
             stack.push(start);
             while (!stack.isEmpty()) {
                 MazeNode current = stack.peek();
                 visited.add(current);
                 this.debugLog("current = " + current);
-                List<Edge> neighbors = edges.get(current);
+
+                List<Edge> neighbors = edges.getOrDefault(current, new ArrayList<>());
                 List<MazeNode> unvisitedNeighbors = new ArrayList<>();
 
                 for (Edge edge: neighbors) {
@@ -187,11 +186,13 @@ public class Maze extends Graph {
                             this.debugLog("move right");
                             this.debugLog("removing right boundary for current");
                             current.removeBoundary(RIGHT);
-                        } else { // diffCol == -1
+                        } else if (diffCol == -1) { // diffCol == -1
                             //neighbor is to the left
                             this.debugLog("move left");
                             this.debugLog("removing right boundary for neighbor");
                             neighbor.removeBoundary(RIGHT);
+                        } else {
+                            throw new IllegalStateException("diffRow = " + diffRow + " diffCol = " + diffCol);
                         }
                     } else if (diffRow == 1) {
                         //diffCol must be 0
