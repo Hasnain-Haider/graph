@@ -1,15 +1,16 @@
 package us.hassu.graphs;
 
 import lombok.Data;
-import us.hassu.graphs.graph.AdjacencyList;
-import us.hassu.graphs.graph.Graph;
-import us.hassu.graphs.graph.Node;
+import us.hassu.graphs.graph.*;
+
+import java.util.HashMap;
+import java.util.List;
 
 @Data
-public class Tree extends Graph {
+public class Tree extends AbstractGraph {
     Node root;
 
-    public Tree(Node root, AdjacencyList edges) {
+    public Tree(Node root, HashMap<Node, List<Edge>> edges) {
         super(edges);
         this.root = root;
 

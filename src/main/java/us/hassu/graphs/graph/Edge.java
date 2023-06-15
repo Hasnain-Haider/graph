@@ -1,13 +1,12 @@
 package us.hassu.graphs.graph;
 
-
 import lombok.Data;
 
 @Data
 public class Edge {
+    int weight;
     private Node from;
     private Node to;
-    int weight;
 
     public Edge(Node from, Node to) {
         this(from, to, 1);

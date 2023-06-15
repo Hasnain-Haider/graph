@@ -12,7 +12,7 @@ import static us.hassu.graphs.maze.MazeNode.Boundary.RIGHT;
 
 @Setter
 @Getter
-public class Maze extends Graph {
+public class Maze extends AbstractGraph {
     // grid is technically not needed, but it helps with mental model
     Grid grid;
     int width;
@@ -20,7 +20,7 @@ public class Maze extends Graph {
     MazeNode start;
     MazeNode end;
 
-    public Maze(AdjacencyList edges, Grid grid, int width, int height, MazeNode start, MazeNode end) {
+    public Maze(HashMap<Node, List<Edge>> edges, Grid grid, int width, int height, MazeNode start, MazeNode end) {
         super(edges);
         this.grid = grid;
         this.width = width;
@@ -43,17 +43,12 @@ public class Maze extends Graph {
     }
 
     public static class Builder {
-        Integer width;
-
-        Integer height;
-
-        boolean createEdges;
-
-        boolean debug;
-
         private final int DEFAULT_WIDTH = 2;
-
         private final int DEFAULT_HEIGHT = 2;
+        Integer width;
+        Integer height;
+        boolean createEdges;
+        boolean debug;
 
         // builder methods for setting property
         public Builder width(int width) {
@@ -79,16 +74,17 @@ public class Maze extends Graph {
         // build method to deal with outer class
         // to return outer instance
         public Maze build() {
-            int width1 = width != null ? width : DEFAULT_WIDTH;
-            int height1 = height != null ? height : DEFAULT_HEIGHT;
-            if (height1 < 2 || width1 < 2) {
+            int mazeWidth = Optional.ofNullable(width).orElse(DEFAULT_WIDTH) + 1;
+            int mazeHeight = Optional.ofNullable(height).orElse(DEFAULT_HEIGHT) + 1;
+            if (mazeHeight < 2 || mazeWidth < 2) {
                 throw new IllegalArgumentException("Maze must be at least 2x2");
             }
-            Grid nodes = createNodesGrid(width1, height1);
-            AdjacencyList edges = createEdges(nodes, width, height);
-            AdjacencyList mazeAdjacencyList = new AdjacencyList();
-            Pair<MazeNode, MazeNode> ingressEgress = carve(nodes, edges, width1, height1, mazeAdjacencyList);
-            return new Maze(mazeAdjacencyList, nodes, width1, height1, ingressEgress.getFirst(), ingressEgress.getSecond());
+            Grid nodes = createNodesGrid(mazeWidth, mazeHeight);
+            HashMap<Node, List<Edge>> mazeAdjacencyList = new HashMap<>();
+            Pair<MazeNode, MazeNode> ingressEgress = generateMaze(nodes, mazeAdjacencyList, mazeWidth, mazeHeight);
+            MazeNode entrance = ingressEgress.getFirst();
+            MazeNode exit = ingressEgress.getSecond();
+            return new Maze(mazeAdjacencyList, nodes, mazeWidth, mazeHeight, entrance, exit);
         }
 
         /*
@@ -118,20 +114,17 @@ public class Maze extends Graph {
             return grid;
         }
 
-        private AdjacencyList createEdges(Grid nodes, int width, int height) {
-            AdjacencyList adjacencyList = new AdjacencyList();
-            for (int i = 0; i < height; i++) {
-                List<MazeNode> col = nodes.get(i);
-                for (int j = 0; j < width; j++) {
-                    Node node = col.get(j);
-                    addEdges(adjacencyList, nodes, node, i, j);
-                }
-            }
-            return adjacencyList;
-        }
-
         // depth first maze generation algorithm
-        private Pair<MazeNode, MazeNode> carve(Grid grid, AdjacencyList edges, int width, int height, AdjacencyList realAdjacencyList) {
+
+        /**
+         * Carve out a maze from the grid
+         * @param grid
+         * @param width
+         * @param height
+         * @param realAdjacencyList easier to make new adjacency list than to remove nodesInitialAdjacencyList from existing one
+         * @return ingress and egress nodes
+         */
+        private Pair<MazeNode, MazeNode> generateMaze(Grid grid, HashMap<Node, List<Edge>> realAdjacencyList, int width, int height) {
             List<MazeNode> row1 = grid.get(0);
             Set<MazeNode> visited = new HashSet<>();
 
@@ -157,11 +150,11 @@ public class Maze extends Graph {
                 visited.add(current);
                 this.debugLog("current = " + current);
 
-                List<Edge> neighbors = edges.getOrDefault(current, new ArrayList<>());
+//                List<Edge> neighbors = nodesInitialAdjacencyList.getOrDefault(current, new ArrayList<>());
+                List<MazeNode> neighbors = getAdjacentMazeNodes(grid, current, width, height);
                 List<MazeNode> unvisitedNeighbors = new ArrayList<>();
 
-                for (Edge edge : neighbors) {
-                    MazeNode neighbor = (MazeNode) edge.getTo();
+                for (MazeNode neighbor : neighbors) {
                     if (!visited.contains(neighbor)) {
                         unvisitedNeighbors.add(neighbor);
                     }
@@ -208,8 +201,8 @@ public class Maze extends Graph {
                     } else {
                         throw new IllegalStateException("diffRow = " + diffRow + " diffCol = " + diffCol);
                     }
-                    realAdjacencyList.put(current, neighbor);
-                    realAdjacencyList.put(neighbor, current);
+                    addEdge(realAdjacencyList, current, neighbor);
+                    addEdge(realAdjacencyList, neighbor, current);
                 }
             }
 
@@ -220,35 +213,39 @@ public class Maze extends Graph {
             return Pair.of(start, exit);
         }
 
-        private void addEdges(
-                AdjacencyList edges,
-                Grid nodes,
-                Node node,
-                int row, int col) {
+        List<MazeNode> getAdjacentMazeNodes(Grid grid, MazeNode node, int width, int height) {
+            int row = node.getRow();
+            int col = node.getCol();
 
+            List<MazeNode> adjacentNodes = new ArrayList<>();
             //up
             if (row > 0) {
-                Node up = nodes.get(row - 1).get(col);
-                edges.put(node, new Edge(node, up));
+                MazeNode up = grid.get(row - 1).get(col);
+                adjacentNodes.add(up);
             }
 
             //down
             if (row < height - 1) {
-                Node down = nodes.get(row + 1).get(col);
-                edges.put(node, new Edge(node, down));
+                MazeNode down = grid.get(row + 1).get(col);
+                adjacentNodes.add(down);
             }
 
             //left
             if (col > 0) {
-                Node left = nodes.get(row).get(col - 1);
-                edges.put(node, new Edge(node, left));
+                MazeNode left = grid.get(row).get(col - 1);
+                adjacentNodes.add(left);
             }
 
             //right
             if (col < width - 1) {
-                Node right = nodes.get(row).get(col + 1);
-                edges.put(node, new Edge(node, right));
+                MazeNode right = grid.get(row).get(col + 1);
+                adjacentNodes.add(right);
             }
+            return adjacentNodes;
+        }
+
+        void addEdge(HashMap<Node, List<Edge>> edges, Node from, Node to) {
+            edges.computeIfAbsent(from, k -> new ArrayList<>()).add(new Edge(from, to));
         }
 
         void debugLog(String s) {

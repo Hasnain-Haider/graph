@@ -1,12 +1,13 @@
-package us.hassu.graphs.graph;
+package us.hassu.graphs.maze;
 
 import us.hassu.graphs.maze.MazeNode;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Grid extends ArrayList<List<MazeNode>> {
+class Grid extends ArrayList<List<MazeNode>> {
     public Grid(int initialCapacity) {
         super(initialCapacity);
     }
+
 }

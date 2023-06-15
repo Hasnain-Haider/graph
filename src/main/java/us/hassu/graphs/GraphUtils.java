@@ -2,15 +2,11 @@ package us.hassu.graphs;
 
 import lombok.Getter;
 import lombok.Setter;
-import us.hassu.graphs.graph.AdjacencyList;
-import us.hassu.graphs.graph.Edge;
-import us.hassu.graphs.graph.Graph;
-import us.hassu.graphs.graph.Node;
+import us.hassu.graphs.graph.*;
 import us.hassu.graphs.trace.BfsFrame;
 import us.hassu.graphs.trace.BfsTrace;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class GraphUtils {
 
@@ -47,9 +43,8 @@ public class GraphUtils {
                 break;
             }
 
-            List<Edge> neighbors = graph.getAdjacentNodes(current);
-            for (Edge neighborEdge : neighbors) {
-                Node neighbor = neighborEdge.getTo();
+            Set<? extends Node> neighbors = graph.getAdjacentNodes(current);
+            for (Node neighbor : neighbors) {
                 if (!visited.contains(neighbor)) {
                     parents.put(neighbor, current);
                     queue.add(neighbor);
@@ -87,9 +82,8 @@ public class GraphUtils {
                 break;
             }
 
-            List<Edge> neighbors = graph.getAdjacentNodes(current);
-            for (Edge neighborEdge : neighbors) {
-                Node neighbor = neighborEdge.getTo();
+            List<? extends Edge> neighbors = graph.getEdgesFrom(current);
+            for (Node neighbor : graph.getAdjacentNodes(current)) {
                 if (!visited.contains(neighbor)) {
                     parents.put(neighbor, current);
                     queue.add(neighbor);
@@ -128,7 +122,7 @@ public class GraphUtils {
                 debugLog("DFS Found end node " + end);
                 break;
             }
-            for (Edge neighborEdge : graph.getAdjacentNodes(current)) {
+            for (Edge neighborEdge : graph.getEdgesFrom(current)) {
                 Node neighbor = neighborEdge.getTo();
                 if (!visited.contains(neighbor)) {
                     debugLog("DFS Discovered " + neighbor);
@@ -146,9 +140,8 @@ public class GraphUtils {
         }
     }
 
-    boolean hasCycle(Graph graph) {
-        HashMap<Node, List<Edge>> adjacencyList1 = graph.getAdjacencyList();
-        for (Node node : adjacencyList1.keySet()) {
+    boolean hasCycle(AbstractGraph graph) {
+        for (Node node : graph.keySet()) {
             Set<Node> visited = new HashSet<>();
             Stack<Node> stack = new Stack<>();
             visited.add(node);
@@ -160,10 +153,10 @@ public class GraphUtils {
         return false;
     }
 
-    boolean hasCycle(Graph graph, Stack<Node> stack, Set<Node> visited) {
+    boolean hasCycle(AbstractGraph graph, Stack<Node> stack, Set<Node> visited) {
         Node current = stack.peek();
         // O(n) operation
-        Set<Node> neighbors = getAdjacentNodes(graph, current);
+        Set<? extends Node> neighbors = graph.getAdjacentNodes(current);
 
         if (!neighbors.isEmpty()) {
             for (Node neighbor : neighbors) {
@@ -185,10 +178,9 @@ public class GraphUtils {
     }
 
     // untested
-    boolean hasCycleBFS(Graph graph) {
-        AdjacencyList adjacencyList = graph.getAdjacencyList();
+    boolean hasCycleBFS(AbstractGraph graph) {
 
-        for (Node node : adjacencyList.keySet()) {
+        for (Node node : graph.keySet()) {
             ArrayDeque<Node> queue = new ArrayDeque<>();
             Set<Node> visited = new HashSet<>();
 
@@ -197,7 +189,7 @@ public class GraphUtils {
 
             while (!queue.isEmpty()) {
                 Node curr = queue.poll();
-                Set<Node> neighbors = getAdjacentNodes(graph, curr);
+                Set<? extends Node> neighbors = graph.getAdjacentNodes(curr);
                 for (Node neighbor : neighbors) {
                     if (visited.contains(neighbor)) {
                         return true;
@@ -208,14 +200,6 @@ public class GraphUtils {
             }
         }
         return false;
-    }
-
-    public Set<Node> getAdjacentNodes(Graph graph, Node node) {
-        return Optional.ofNullable(graph.getAdjacentNodes(node))
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(Edge::getTo)
-                .collect(Collectors.toSet());
     }
 
     private List<Node> getPathFromParentMap(Map<Node, Node> parents, Node end) {
