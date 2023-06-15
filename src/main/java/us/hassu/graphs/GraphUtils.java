@@ -2,7 +2,10 @@ package us.hassu.graphs;
 
 import lombok.Getter;
 import lombok.Setter;
-import us.hassu.graphs.graph.*;
+import us.hassu.graphs.graph.AbstractGraph;
+import us.hassu.graphs.graph.Edge;
+import us.hassu.graphs.graph.Graph;
+import us.hassu.graphs.graph.Node;
 import us.hassu.graphs.trace.BfsFrame;
 import us.hassu.graphs.trace.BfsTrace;
 

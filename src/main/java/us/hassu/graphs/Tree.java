@@ -1,7 +1,9 @@
 package us.hassu.graphs;
 
 import lombok.Data;
-import us.hassu.graphs.graph.*;
+import us.hassu.graphs.graph.AbstractGraph;
+import us.hassu.graphs.graph.Edge;
+import us.hassu.graphs.graph.Node;
 
 import java.util.HashMap;
 import java.util.List;

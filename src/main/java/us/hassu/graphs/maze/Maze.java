@@ -2,7 +2,9 @@ package us.hassu.graphs.maze;
 
 import lombok.Getter;
 import lombok.Setter;
-import us.hassu.graphs.graph.*;
+import us.hassu.graphs.graph.AbstractGraph;
+import us.hassu.graphs.graph.Edge;
+import us.hassu.graphs.graph.Node;
 
 import java.util.*;
 
@@ -118,6 +120,7 @@ public class Maze extends AbstractGraph {
 
         /**
          * Carve out a maze from the grid
+         *
          * @param grid
          * @param width
          * @param height
