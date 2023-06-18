@@ -1,5 +1,7 @@
 package us.hassu.graphs.maze;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import us.hassu.graphs.graph.Node;
@@ -8,17 +10,13 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.StringJoiner;
 
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class MazeNode extends Node {
-    @Getter
-    @Setter
     Set<Boundary> boundaries;
 
-    @Getter
-    @Setter
     private int row;
 
-    @Getter
-    @Setter
     private int col;
 
     public MazeNode(String id) {

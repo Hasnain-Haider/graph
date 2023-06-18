@@ -1,6 +1,7 @@
 package us.hassu.graphs.graph;
 
 import lombok.Data;
+import lombok.NonNull;
 
 import java.util.Objects;
 
@@ -11,7 +12,7 @@ public class Node {
     Node() {
     }
 
-    public Node(String id) {
+    public Node(@NonNull String id) {
         this.id = Objects.requireNonNull(id, "Node id cannot be null");
     }
 

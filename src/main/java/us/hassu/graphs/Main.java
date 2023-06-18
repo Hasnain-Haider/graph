@@ -13,12 +13,14 @@ public class Main {
         Maze.Builder builder = new Maze.Builder().height(3).width(3);
         Maze maze = builder.build();
         maze.print();
-
         List<Edge> edges = new ArrayList<>();
+
         HashMap<Node, List<Edge>> adjacencyList = new HashMap<>();
         Node n = new Node("n");
         Node m = new Node("m");
+        Node m1 = new Node("m");
         edges.add(new Edge(n, m));
+        edges.add(new Edge(n, m1));
         adjacencyList.put(n, edges);
         Tree tree = new Tree(n, adjacencyList);
         tree.print();

@@ -5,9 +5,9 @@ import java.util.Set;
 
 public interface Graph {
 
-    Set<? extends Node> getAdjacentNodes(Node node);
+    Set<? extends Node> getAdjacentNodesSet(Node node);
 
-    List<? extends Node> getAdjacentNodesList(Node node);
+    List<? extends Node> getAdjacentNodes(Node node);
 
     List<? extends Edge> getEdgesFrom(Node node);
 

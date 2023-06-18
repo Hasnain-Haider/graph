@@ -211,7 +211,8 @@ public class Maze extends AbstractGraph {
 
             //create exit
             List<MazeNode> lastRow = grid.get(height - 1);
-            MazeNode exit = lastRow.get(random.nextInt(lastRow.size() - 1) + 1);
+
+            MazeNode exit = lastRow.get(lastRow.size() - start.getCol());
             exit.removeBoundary(BOTTOM);
             return Pair.of(start, exit);
         }

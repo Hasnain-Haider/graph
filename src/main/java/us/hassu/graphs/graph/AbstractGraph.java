@@ -1,14 +1,15 @@
 package us.hassu.graphs.graph;
 
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @EqualsAndHashCode(callSuper = true)
 public abstract class AbstractGraph extends HashMap<Node, List<Edge>> implements Graph {
-    public AbstractGraph(HashMap<Node, List<Edge>> adjacencyList) {
-        super(Objects.requireNonNull(adjacencyList));
+    public AbstractGraph(@NonNull HashMap<Node, List<Edge>> adjacencyList) {
+        super(adjacencyList);
     }
 
     AbstractGraph() {
@@ -27,7 +28,13 @@ public abstract class AbstractGraph extends HashMap<Node, List<Edge>> implements
     }
 
     @Override
-    public Set<? extends Node> getAdjacentNodes(Node node) {
+    public List<? extends Node> getAdjacentNodes(Node node) {
+        return Optional.ofNullable(this.get(node)).orElse(Collections.emptyList())
+                .stream().map(Edge::getTo).collect(Collectors.toList());
+    }
+
+    @Override
+    public Set<? extends Node> getAdjacentNodesSet(Node node) {
         return Optional.ofNullable(this.get(node))
                 .orElse(Collections.emptyList())
                 .stream()
@@ -48,12 +55,6 @@ public abstract class AbstractGraph extends HashMap<Node, List<Edge>> implements
                     .append(this.get(node)).append("}//");
         }
         return sb.toString();
-    }
-
-    @Override
-    public List<? extends Node> getAdjacentNodesList(Node node) {
-        return Optional.ofNullable(this.get(node)).orElse(Collections.emptyList())
-                .stream().map(Edge::getTo).collect(Collectors.toList());
     }
 
     @Override

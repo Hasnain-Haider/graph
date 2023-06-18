@@ -46,7 +46,7 @@ public class GraphUtils {
                 break;
             }
 
-            Set<? extends Node> neighbors = graph.getAdjacentNodes(current);
+            Set<? extends Node> neighbors = graph.getAdjacentNodesSet(current);
             for (Node neighbor : neighbors) {
                 if (!visited.contains(neighbor)) {
                     parents.put(neighbor, current);
@@ -86,7 +86,7 @@ public class GraphUtils {
             }
 
             List<? extends Edge> neighbors = graph.getEdgesFrom(current);
-            for (Node neighbor : graph.getAdjacentNodes(current)) {
+            for (Node neighbor : graph.getAdjacentNodesSet(current)) {
                 if (!visited.contains(neighbor)) {
                     parents.put(neighbor, current);
                     queue.add(neighbor);
@@ -159,7 +159,7 @@ public class GraphUtils {
     boolean hasCycle(AbstractGraph graph, Stack<Node> stack, Set<Node> visited) {
         Node current = stack.peek();
         // O(n) operation
-        Set<? extends Node> neighbors = graph.getAdjacentNodes(current);
+        Set<? extends Node> neighbors = graph.getAdjacentNodesSet(current);
 
         if (!neighbors.isEmpty()) {
             for (Node neighbor : neighbors) {
@@ -192,7 +192,7 @@ public class GraphUtils {
 
             while (!queue.isEmpty()) {
                 Node curr = queue.poll();
-                Set<? extends Node> neighbors = graph.getAdjacentNodes(curr);
+                Set<? extends Node> neighbors = graph.getAdjacentNodesSet(curr);
                 for (Node neighbor : neighbors) {
                     if (visited.contains(neighbor)) {
                         return true;
