@@ -11,11 +11,6 @@ public class MazeTest {
     @org.testng.annotations.AfterMethod
     public void tearDown() {
     }
-
-    @org.testng.annotations.Test
-    public void testGetGrid() {
-    }
-
     @Test
     public void testGenerateMaze() {
 //        HashMap<Node, Integer> startIndexOccurence = new HashMap<>();
