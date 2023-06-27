@@ -76,8 +76,8 @@ public class Maze extends AbstractGraph {
         // build method to deal with outer class
         // to return outer instance
         public Maze build() {
-            int mazeWidth = Optional.ofNullable(width).orElse(DEFAULT_WIDTH) + 1;
-            int mazeHeight = Optional.ofNullable(height).orElse(DEFAULT_HEIGHT) + 1;
+            int mazeWidth = Optional.ofNullable(width).orElse(DEFAULT_WIDTH);
+            int mazeHeight = Optional.ofNullable(height).orElse(DEFAULT_HEIGHT);
             if (mazeHeight < 2 || mazeWidth < 2) {
                 throw new IllegalArgumentException("Maze must be at least 2x2");
             }
@@ -128,32 +128,25 @@ public class Maze extends AbstractGraph {
          * @return ingress and egress nodes
          */
         private Pair<MazeNode, MazeNode> generateMaze(Grid grid, HashMap<Node, List<Edge>> realAdjacencyList, int width, int height) {
-            List<MazeNode> row1 = grid.get(0);
             Set<MazeNode> visited = new HashSet<>();
-
-            for (MazeNode node : row1) {
-                node.removeBoundary(RIGHT);
-                visited.add(node);
-            }
-            for (int i = 0; i < height; i++) {
-                grid.get(i).get(0).removeBoundary(BOTTOM);
-                visited.add(grid.get(i).get(0));
-            }
-
             Random random = new Random();
             Stack<MazeNode> stack = new Stack<>();
 
-            //starting position
-            List<MazeNode> firstRow = grid.get(0);
-            MazeNode start = firstRow.get(random.nextInt(firstRow.size() - 1) + 1);
+            boolean topEntrance = height >= width;
+            MazeNode start;
+            if (topEntrance) {
+                // find random column
+                start = grid.get(0).get(random.nextInt(width));
+            } else {
+                // find random row
+                start = grid.get(random.nextInt(height)).get(0);
+            }
 
             stack.push(start);
             while (!stack.isEmpty()) {
                 MazeNode current = stack.peek();
                 visited.add(current);
                 this.debugLog("current = " + current);
-
-//                List<Edge> neighbors = nodesInitialAdjacencyList.getOrDefault(current, new ArrayList<>());
                 List<MazeNode> neighbors = getAdjacentMazeNodes(grid, current, width, height);
                 List<MazeNode> unvisitedNeighbors = new ArrayList<>();
 
@@ -209,11 +202,17 @@ public class Maze extends AbstractGraph {
                 }
             }
 
-            //create exit
-            List<MazeNode> lastRow = grid.get(height - 1);
+            MazeNode exit;
+            if (topEntrance) {
+                // find opposite column
+                exit = grid.get(height - 1).get(width - start.getCol() - 1);
+                exit.removeBoundary(BOTTOM);
+            } else {
+                // find opposite row
+                exit = grid.get(height - start.getRow() - 1).get(width - 1);
+                exit.removeBoundary(RIGHT);
+            }
 
-            MazeNode exit = lastRow.get(lastRow.size() - start.getCol());
-            exit.removeBoundary(BOTTOM);
             return Pair.of(start, exit);
         }
 

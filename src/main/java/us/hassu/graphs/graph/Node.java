@@ -3,21 +3,18 @@ package us.hassu.graphs.graph;
 import lombok.Data;
 import lombok.NonNull;
 
-import java.util.Objects;
-
 @Data
 public class Node {
     private String id;
 
-    Node() {
+    private Node() {
     }
 
-    public Node(@NonNull String id) {
-        this.id = Objects.requireNonNull(id, "Node id cannot be null");
+    public Node(Node n) {
+        this.id = n.id;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
+    public Node(@NonNull() String id) {
+        this.id = id;
     }
 }

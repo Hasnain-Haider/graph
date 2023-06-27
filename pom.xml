@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>us.hassu</groupId>
@@ -13,46 +13,64 @@
             <optional>true</optional>
             <version>1.18.28</version>
         </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>RELEASE</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <properties>
-        <maven.compiler.source>20</maven.compiler.source>
-        <maven.compiler.target>20</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-        <distributionManagement>
-            <snapshotRepository>
-                <id>artifact-registry</id>
-                <url>artifactregistry://us-west1-maven.pkg.dev/sturdy-index-386400/public</url>
-            </snapshotRepository>
-            <repository>
-                <id>artifact-registry</id>
-                <url>artifactregistry://us-west1-maven.pkg.dev/sturdy-index-386400/public</url>
-            </repository>
-        </distributionManagement>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>artifact-registry</id>
+            <url>artifactregistry://us-west1-maven.pkg.dev/sturdy-index-386400/public</url>
+        </snapshotRepository>
+        <repository>
+            <id>artifact-registry</id>
+            <url>artifactregistry://us-west1-maven.pkg.dev/sturdy-index-386400/public</url>
+        </repository>
+    </distributionManagement>
 
-        <repositories>
-            <repository>
-                <id>artifact-registry</id>
-                <url>artifactregistry://us-west1-maven.pkg.dev/sturdy-index-386400/public</url>
-                <releases>
-                    <enabled>true</enabled>
-                </releases>
-                <snapshots>
-                    <enabled>true</enabled>
-                </snapshots>
-            </repository>
-        </repositories>
+    <repositories>
+        <repository>
+            <id>artifact-registry</id>
+            <url>artifactregistry://us-west1-maven.pkg.dev/sturdy-index-386400/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
-        <build>
-            <extensions>
-                <extension>
-                    <groupId>com.google.cloud.artifactregistry</groupId>
-                    <artifactId>artifactregistry-maven-wagon</artifactId>
-                    <version>2.2.0</version>
-                </extension>
-            </extensions>
-        </build>
+    <build>
+        <extensions>
+            <extension>
+                <groupId>com.google.cloud.artifactregistry</groupId>
+                <artifactId>artifactregistry-maven-wagon</artifactId>
+                <version>2.2.0</version>
+            </extension>
+        </extensions>
+    </build>
 
 </project>
