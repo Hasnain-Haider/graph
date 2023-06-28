@@ -11,6 +11,7 @@ import java.util.StringJoiner;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class MazeNode extends Node {
+    @EqualsAndHashCode.Exclude
     Set<Boundary> boundaries;
 
     private int row;
