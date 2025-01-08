@@ -9,11 +9,11 @@ import java.util.StringJoiner;
 
 @Getter
 @Setter
-public class BfsFrame {
-    Node node;
-    Set<Node> newlyDiscovered;
+public class BfsFrame <T extends Node> {
+    T node;
+    Set<T> newlyDiscovered;
 
-    public BfsFrame(Node node, Set<Node> queue) {
+    public BfsFrame(T node, Set<T> queue) {
         this.node = node;
         this.newlyDiscovered = queue;
     }

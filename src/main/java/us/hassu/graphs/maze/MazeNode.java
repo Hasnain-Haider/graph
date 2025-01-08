@@ -29,14 +29,6 @@ public class MazeNode extends Node {
         this.col = col;
     }
 
-    @Override
-    public String toString() {
-        return new StringJoiner(", ", MazeNode.class.getSimpleName() + "[", "]")
-                .add("boundaries=" + boundaries)
-                .add("id='" + this.getId() + "'")
-                .toString();
-    }
-
     public void removeBoundary(Boundary boundary) {
         boundaries.remove(boundary);
     }

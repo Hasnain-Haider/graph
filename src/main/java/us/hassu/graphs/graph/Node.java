@@ -7,14 +7,11 @@ import lombok.NonNull;
 public class Node {
     private String id;
 
-    private Node() {
-    }
-
     public Node(Node n) {
-        this.id = n.id;
+        this(n.getId());
     }
 
-    public Node(@NonNull() String id) {
+    public Node(@NonNull String id) {
         this.id = id;
     }
 }

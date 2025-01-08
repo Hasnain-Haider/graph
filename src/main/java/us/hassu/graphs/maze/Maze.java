@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import us.hassu.graphs.graph.AbstractGraph;
 import us.hassu.graphs.graph.Edge;
-import us.hassu.graphs.graph.Node;
 
 import java.util.*;
 
@@ -14,21 +13,28 @@ import static us.hassu.graphs.maze.MazeNode.Boundary.RIGHT;
 
 @Setter
 @Getter
-public class Maze extends AbstractGraph {
+public class Maze extends AbstractGraph<MazeNode> {
     // grid is technically not needed, but it helps with mental model
-    Grid grid;
+    Grid<MazeNode> grid;
     int width;
     int height;
-    MazeNode start;
-    MazeNode end;
+    MazeNode entrance;
+    MazeNode exit;
+    boolean isTopEntrance;
 
-    public Maze(HashMap<Node, List<Edge>> edges, Grid grid, int width, int height, MazeNode start, MazeNode end) {
+    public Maze(Maze maze) {
+        this(maze, maze.getGrid(), maze.getHeight(), maze.getWidth(), maze.getEntrance(), maze.getExit());
+    }
+
+    public Maze(HashMap<MazeNode, List<Edge<MazeNode>>> edges, Grid<MazeNode> grid, int width, int height, MazeNode entrance, MazeNode exit) {
         super(edges);
         this.grid = grid;
         this.width = width;
         this.height = height;
-        this.start = start;
-        this.end = end;
+        this.entrance = entrance;
+        this.exit = exit;
+        this.isTopEntrance = height >= width;
+        System.out.println("maze has top entrance: " + isTopEntrance + " maze height: " + height + " maze width: " + width + " entrance: " + entrance + " exit: " + exit);
     }
 
     @Override
@@ -81,12 +87,12 @@ public class Maze extends AbstractGraph {
             if (mazeHeight < 2 || mazeWidth < 2) {
                 throw new IllegalArgumentException("Maze must be at least 2x2");
             }
-            Grid nodes = createNodesGrid(mazeWidth, mazeHeight);
-            HashMap<Node, List<Edge>> mazeAdjacencyList = new HashMap<>();
-            Pair<MazeNode, MazeNode> ingressEgress = generateMaze(nodes, mazeAdjacencyList, mazeWidth, mazeHeight);
+            Grid<MazeNode> nodes = createNodesGrid(mazeWidth, mazeHeight);
+            HashMap<MazeNode, List<Edge<MazeNode>>> adjacencyList = new HashMap<>();
+            Pair<MazeNode, MazeNode> ingressEgress = generateMaze(nodes, adjacencyList, mazeWidth, mazeHeight);
             MazeNode entrance = ingressEgress.getFirst();
             MazeNode exit = ingressEgress.getSecond();
-            return new Maze(mazeAdjacencyList, nodes, mazeWidth, mazeHeight, entrance, exit);
+            return new Maze(adjacencyList, nodes, mazeWidth, mazeHeight, entrance, exit);
         }
 
         /*
@@ -102,8 +108,8 @@ public class Maze extends AbstractGraph {
             i = x = row = limited by height
             j = y = col = limited by width
          */
-        private Grid createNodesGrid(int width, int height) {
-            Grid grid = new Grid(width);
+        private Grid<MazeNode> createNodesGrid(int width, int height) {
+            Grid<MazeNode> grid = new Grid(width);
             for (int i = 0; i < height; i++) {
                 List<MazeNode> col = new ArrayList<>();
                 grid.add(col);
@@ -124,85 +130,40 @@ public class Maze extends AbstractGraph {
          * @param grid
          * @param width
          * @param height
-         * @param realAdjacencyList easier to make new adjacency list than to remove nodesInitialAdjacencyList from existing one
+         * @param adjacencyList easier to make new adjacency list than to remove nodesInitialAdjacencyList from existing one
          * @return ingress and egress nodes
          */
-        private Pair<MazeNode, MazeNode> generateMaze(Grid grid, HashMap<Node, List<Edge>> realAdjacencyList, int width, int height) {
+        private Pair<MazeNode, MazeNode> generateMaze(Grid<MazeNode> grid, HashMap<MazeNode, List<Edge<MazeNode>>> adjacencyList, int width, int height) {
             Set<MazeNode> visited = new HashSet<>();
             Random random = new Random();
             Stack<MazeNode> stack = new Stack<>();
 
             boolean topEntrance = height >= width;
-            MazeNode start;
+            MazeNode start, exit;
+
             if (topEntrance) {
-                // find random column
                 start = grid.get(0).get(random.nextInt(width));
             } else {
-                // find random row
                 start = grid.get(random.nextInt(height)).get(0);
             }
 
             stack.push(start);
             while (!stack.isEmpty()) {
                 MazeNode current = stack.peek();
-                visited.add(current);
-                this.debugLog("current = " + current);
-                List<MazeNode> neighbors = getAdjacentMazeNodes(grid, current, width, height);
-                List<MazeNode> unvisitedNeighbors = new ArrayList<>();
+                List<MazeNode> unvisitedNeighbors = getAdjacentMazeNodes(grid, current, width, height).stream()
+                        .filter(n -> !visited.contains(n)).toList();
 
-                for (MazeNode neighbor : neighbors) {
-                    if (!visited.contains(neighbor)) {
-                        unvisitedNeighbors.add(neighbor);
-                    }
-                }
-
-                this.debugLog("unvisitedNeighbors = " + unvisitedNeighbors);
-
-                if (unvisitedNeighbors.isEmpty()) {
-                    stack.pop();
-                } else {
+                if (!unvisitedNeighbors.isEmpty()) {
                     // choose random neighbor
                     MazeNode neighbor = unvisitedNeighbors.get(random.nextInt(unvisitedNeighbors.size()));
                     stack.push(neighbor);
-
-                    // which neighbor is it?
-                    int diffRow = neighbor.getRow() - current.getRow();
-                    int diffCol = neighbor.getCol() - current.getCol();
-                    if (diffRow == 0) {
-                        // same row
-                        if (diffCol == 1) {
-                            //neighbor is to the right
-                            this.debugLog("move right");
-                            this.debugLog("removing right boundary for current");
-                            current.removeBoundary(RIGHT);
-                        } else if (diffCol == -1) { // diffCol == -1
-                            //neighbor is to the left
-                            this.debugLog("move left");
-                            this.debugLog("removing right boundary for neighbor");
-                            neighbor.removeBoundary(RIGHT);
-                        } else {
-                            throw new IllegalStateException("diffRow = " + diffRow + " diffCol = " + diffCol);
-                        }
-                    } else if (diffRow == 1) {
-                        //diffCol must be 0
-                        //neighbor is below
-                        this.debugLog("move down");
-                        this.debugLog("removing bottom boundary for current");
-                        current.removeBoundary(BOTTOM);
-                    } else if (diffRow == -1) {
-                        //diffCol must be 0
-                        //same col
-                        //neighbor is above
-                        neighbor.removeBoundary(BOTTOM);
-                    } else {
-                        throw new IllegalStateException("diffRow = " + diffRow + " diffCol = " + diffCol);
-                    }
-                    addEdge(realAdjacencyList, current, neighbor);
-                    addEdge(realAdjacencyList, neighbor, current);
+                    visited.add(neighbor);
+                    removeBoundariesAndAddEdges(current, neighbor, adjacencyList);
+                } else {
+                    stack.pop();
                 }
             }
 
-            MazeNode exit;
             if (topEntrance) {
                 // find opposite column
                 exit = grid.get(height - 1).get(width - start.getCol() - 1);
@@ -216,7 +177,7 @@ public class Maze extends AbstractGraph {
             return Pair.of(start, exit);
         }
 
-        List<MazeNode> getAdjacentMazeNodes(Grid grid, MazeNode node, int width, int height) {
+        List<MazeNode> getAdjacentMazeNodes(Grid<MazeNode> grid, MazeNode node, int width, int height) {
             int row = node.getRow();
             int col = node.getCol();
 
@@ -247,8 +208,30 @@ public class Maze extends AbstractGraph {
             return adjacentNodes;
         }
 
-        void addEdge(HashMap<Node, List<Edge>> edges, Node from, Node to) {
-            edges.computeIfAbsent(from, k -> new ArrayList<>()).add(new Edge(from, to));
+        private void removeBoundariesAndAddEdges(MazeNode current, MazeNode neighbor, HashMap<MazeNode, List<Edge<MazeNode>>> adjacencyList) {
+            int diffRow = neighbor.getRow() - current.getRow();
+            int diffCol = neighbor.getCol() - current.getCol();
+
+            if (Math.abs(diffRow) +  Math.abs(diffCol) > 1) {
+                throw new IllegalStateException("Nodes are not adjacent");
+            }
+
+            if (diffRow == -1) {
+                neighbor.removeBoundary(BOTTOM);
+            } else if (diffRow == 1) {
+                current.removeBoundary(BOTTOM);
+            } else if (diffCol == -1) {
+                neighbor.removeBoundary(RIGHT);
+            } else if (diffCol == 1) {
+                current.removeBoundary(RIGHT);
+            }
+
+            addEdge(adjacencyList, current, neighbor);
+            addEdge(adjacencyList, neighbor, current);
+        }
+
+        void addEdge(HashMap<MazeNode, List<Edge<MazeNode>>> edges, MazeNode from, MazeNode to) {
+            edges.computeIfAbsent(from, k -> new ArrayList<>()).add(new Edge<MazeNode>(from, to));
         }
 
         void debugLog(String s) {

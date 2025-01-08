@@ -3,16 +3,16 @@ package us.hassu.graphs.graph;
 import lombok.Data;
 
 @Data
-public class Edge {
+public class Edge <T extends Node> {
     int weight;
-    private Node from;
-    private Node to;
+    private T from;
+    private T to;
 
-    public Edge(Node from, Node to) {
+    public Edge(T from, T to) {
         this(from, to, 1);
     }
 
-    public Edge(Node from, Node to, int weight) {
+    public Edge(T from, T to, int weight) {
         this.from = from;
         this.to = to;
         this.weight = weight;

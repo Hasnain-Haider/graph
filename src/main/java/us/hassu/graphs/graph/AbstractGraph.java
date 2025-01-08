@@ -7,50 +7,50 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @EqualsAndHashCode(callSuper = true)
-public abstract class AbstractGraph extends HashMap<Node, List<Edge>> implements Graph {
-    public AbstractGraph(@NonNull HashMap<Node, List<Edge>> adjacencyList) {
+public abstract class AbstractGraph<T extends Node> extends HashMap<T, List<Edge<T>>> implements Graph<T> {
+    public AbstractGraph(@NonNull HashMap<T, List<Edge<T>>> adjacencyList) {
         super(adjacencyList);
     }
 
     AbstractGraph() {
     }
 
-    public List<Edge> put(Node node, Edge edge) {
-        List<Edge> edges = this.computeIfAbsent(node, k -> new ArrayList<>());
+    public List<Edge<T>> put(T node, Edge<T> edge) {
+        List<Edge<T>> edges = this.computeIfAbsent(node, k -> new ArrayList<>());
         edges.add(edge);
         return edges;
     }
 
-    public List<Edge> put(Node from, Node to) {
-        List<Edge> edges = this.computeIfAbsent(from, k -> new ArrayList<>());
-        edges.add(new Edge(from, to));
+    public List<Edge<T>> put(T from, T to) {
+        List<Edge<T>> edges = this.computeIfAbsent(from, k -> new ArrayList<>());
+        edges.add(new Edge<T>(from, to));
         return edges;
     }
 
     @Override
-    public List<? extends Node> getAdjacentNodes(Node node) {
+    public List<T> getAdjacentNodes(T node) {
         return Optional.ofNullable(this.get(node)).orElse(Collections.emptyList())
-                .stream().map(Edge::getTo).collect(Collectors.toList());
+                .stream().map(edge -> (T) edge.getTo()).collect(Collectors.toList());
     }
 
     @Override
-    public Set<? extends Node> getAdjacentNodesSet(Node node) {
+    public Set<T> getAdjacentNodesSet(T node) {
         return Optional.ofNullable(this.get(node))
                 .orElse(Collections.emptyList())
                 .stream()
-                .map(Edge::getTo)
+                .map(edge -> (T) edge.getTo())
                 .collect(Collectors.toSet());
     }
 
     @Override
-    public List<Edge> getEdgesFrom(Node node) {
+    public List<Edge<T>> getEdgesFrom(T node) {
         return this.get(node);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (Node node : this.keySet()) {
+        for (T node : this.keySet()) {
             sb.append("{").append(node).append(" -> ")
                     .append(this.get(node)).append("}//");
         }
@@ -60,7 +60,7 @@ public abstract class AbstractGraph extends HashMap<Node, List<Edge>> implements
     @Override
     public void print() {
         System.out.println("Edges:");
-        for (Node node : this.keySet()) {
+        for (T node : this.keySet()) {
             System.out.println(node + " -> " + this.get(node));
         }
     }

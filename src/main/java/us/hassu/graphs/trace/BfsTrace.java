@@ -10,8 +10,8 @@ import java.util.List;
 // Shows which nodes bfs visited and in which order
 @Setter
 @Getter
-public class BfsTrace {
-    List<Node> path = new ArrayList<>();
+public class BfsTrace <T extends Node> {
+    List<T> path = new ArrayList<>();
 
     List<BfsFrame> trace = new ArrayList<>();
 

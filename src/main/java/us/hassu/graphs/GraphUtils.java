@@ -11,9 +11,10 @@ import us.hassu.graphs.trace.BfsTrace;
 
 import java.util.*;
 
-public class GraphUtils {
+public class GraphUtils<T extends Node> {
 
     private static GraphUtils INSTANCE;
+
     @Setter
     @Getter
     boolean debug;
@@ -22,32 +23,31 @@ public class GraphUtils {
         this.debug = debug;
     }
 
-    public static GraphUtils getInstance() {
+    public static <T extends Node> GraphUtils<T> getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new GraphUtils(false);
+            INSTANCE = new GraphUtils<>(false);
         }
         return INSTANCE;
     }
 
-    // Returns the path from start to end
-    public List<Node> breadFirstSearch(Graph graph, Node start, Node end) {
-        ArrayDeque<Node> queue = new ArrayDeque<>();
-        Set<Node> visited = new HashSet<>();
-        Map<Node, Node> parents = new HashMap<>();
+    public List<T> breadthFirstSearch(Graph<T> graph, T start, T end) {
+        ArrayDeque<T> queue = new ArrayDeque<>();
+        Set<T> visited = new HashSet<>();
+        Map<T, T> parents = new HashMap<>();
 
         queue.add(start);
         visited.add(start);
 
         boolean found = false;
         while (!queue.isEmpty()) {
-            Node current = queue.removeFirst();
+            T current = queue.removeFirst();
             if (current.equals(end)) {
                 found = true;
                 break;
             }
 
-            Set<? extends Node> neighbors = graph.getAdjacentNodesSet(current);
-            for (Node neighbor : neighbors) {
+            Set<? extends T> neighbors = graph.getAdjacentNodesSet(current);
+            for (T neighbor : neighbors) {
                 if (!visited.contains(neighbor)) {
                     parents.put(neighbor, current);
                     queue.add(neighbor);
@@ -63,30 +63,27 @@ public class GraphUtils {
         }
     }
 
-    // Returns "BFSTrace", which is a list of every node visited in the order they were visited,
-    // and the state of the queue at each step
-    public BfsTrace bfsTrace(Graph graph, Node start, Node end) {
+    public BfsTrace bfsTrace(Graph<T> graph, T start, T end) {
         BfsTrace trace = new BfsTrace();
 
-        ArrayDeque<Node> queue = new ArrayDeque<>();
-        Set<Node> visited = new HashSet<>();
-        Map<Node, Node> parents = new HashMap<>();
+        ArrayDeque<T> queue = new ArrayDeque<>();
+        Set<T> visited = new HashSet<>();
+        Map<T, T> parents = new HashMap<>();
 
         queue.add(start);
         visited.add(start);
 
         boolean found = false;
         while (!queue.isEmpty()) {
-            Set<Node> newlyQueued = new HashSet<>();
+            Set<T> newlyQueued = new HashSet<>();
 
-            Node current = queue.removeFirst();
+            T current = queue.removeFirst();
             if (current.equals(end)) {
                 found = true;
                 break;
             }
 
-            List<? extends Edge> neighbors = graph.getEdgesFrom(current);
-            for (Node neighbor : graph.getAdjacentNodesSet(current)) {
+            for (T neighbor : graph.getAdjacentNodesSet(current)) {
                 if (!visited.contains(neighbor)) {
                     parents.put(neighbor, current);
                     queue.add(neighbor);
@@ -100,21 +97,21 @@ public class GraphUtils {
 
         trace.setFoundPath(found);
         if (found) {
-            List<Node> path = getPathFromParentMap(parents, end);
+            List<T> path = getPathFromParentMap(parents, end);
             trace.setPath(path);
             return trace;
         }
         return trace;
     }
 
-    public List<Node> dfs(Graph graph, Node start, Node end) {
-        Set<Node> visited = new HashSet<>();
-        Stack<Node> stack = new Stack<>();
-        Map<Node, Node> parents = new HashMap<>();
+    public List<T> dfs(Graph<T> graph, T start, T end) {
+        Set<T> visited = new HashSet<>();
+        Stack<T> stack = new Stack<>();
+        Map<T, T> parents = new HashMap<>();
         boolean found = false;
 
         debugLog("Starting DFS from " + start);
-        Node current = start;
+        T current = start;
         stack.push(current);
 
         while (!stack.isEmpty()) {
@@ -125,8 +122,8 @@ public class GraphUtils {
                 debugLog("DFS Found end node " + end);
                 break;
             }
-            for (Edge neighborEdge : graph.getEdgesFrom(current)) {
-                Node neighbor = neighborEdge.getTo();
+            for (Edge<T> neighborEdge : graph.getEdgesFrom(current)) {
+                T neighbor = neighborEdge.getTo();
                 if (!visited.contains(neighbor)) {
                     debugLog("DFS Discovered " + neighbor);
                     parents.put(neighbor, current);
@@ -143,10 +140,10 @@ public class GraphUtils {
         }
     }
 
-    boolean hasCycle(AbstractGraph graph) {
-        for (Node node : graph.keySet()) {
-            Set<Node> visited = new HashSet<>();
-            Stack<Node> stack = new Stack<>();
+    boolean hasCycle(AbstractGraph<T> graph) {
+        for (T node : graph.keySet()) {
+            Set<T> visited = new HashSet<>();
+            Stack<T> stack = new Stack<>();
             visited.add(node);
             stack.push(node);
             if (hasCycle(graph, stack, visited)) {
@@ -156,13 +153,13 @@ public class GraphUtils {
         return false;
     }
 
-    boolean hasCycle(AbstractGraph graph, Stack<Node> stack, Set<Node> visited) {
-        Node current = stack.peek();
+    boolean hasCycle(AbstractGraph<T> graph, Stack<T> stack, Set<T> visited) {
+        T current = stack.peek();
         // O(n) operation
-        Set<? extends Node> neighbors = graph.getAdjacentNodesSet(current);
+        Set<T> neighbors = graph.getAdjacentNodesSet(current);
 
         if (!neighbors.isEmpty()) {
-            for (Node neighbor : neighbors) {
+            for (T neighbor : neighbors) {
                 if (visited.contains(neighbor)) {
                     this.debugLog("Cycle detected: " + stack + " -> " + neighbor);
                     return true;
@@ -181,19 +178,19 @@ public class GraphUtils {
     }
 
     // untested
-    boolean hasCycleBFS(AbstractGraph graph) {
+    boolean hasCycleBFS(AbstractGraph<T> graph) {
 
-        for (Node node : graph.keySet()) {
-            ArrayDeque<Node> queue = new ArrayDeque<>();
-            Set<Node> visited = new HashSet<>();
+        for (T node : graph.keySet()) {
+            ArrayDeque<T> queue = new ArrayDeque<>();
+            Set<T> visited = new HashSet<>();
 
             queue.add(node);
             visited.add(node);
 
             while (!queue.isEmpty()) {
-                Node curr = queue.poll();
-                Set<? extends Node> neighbors = graph.getAdjacentNodesSet(curr);
-                for (Node neighbor : neighbors) {
+                T curr = queue.poll();
+                Set<T> neighbors = graph.getAdjacentNodesSet(curr);
+                for (T neighbor : neighbors) {
                     if (visited.contains(neighbor)) {
                         return true;
                     }
@@ -205,9 +202,9 @@ public class GraphUtils {
         return false;
     }
 
-    private List<Node> getPathFromParentMap(Map<Node, Node> parents, Node end) {
-        List<Node> path = new ArrayList<>();
-        Node current = end;
+    private List<T> getPathFromParentMap(Map<T, T> parents, T end) {
+        List<T> path = new ArrayList<>();
+        T current = end;
         while (current != null) {
             path.add(current);
             current = parents.get(current);
