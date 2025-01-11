@@ -1,4 +1,4 @@
-package us.hassu.graphs.maze;
+package us.hassu.graphs;
 
 import lombok.Data;
 

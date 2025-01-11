@@ -18,8 +18,8 @@ public class MazeTest {
 
         for (int h = 2; h < 30; h++) {
             for (int w = 2; w < 30; w++) {
-                Maze.Builder builder = new Maze.Builder();
-                Maze maze = builder.height(h).width(w).build();
+//                Maze.Builder builder = new Maze.Builder();
+//                Maze maze = builder.height(h).width(w).build();
 //                startIndexOccurence.put(new Node(maze.start), startIndexOccurence.getOrDefault(new Node(maze.start), 0) + 1);
             }
         }

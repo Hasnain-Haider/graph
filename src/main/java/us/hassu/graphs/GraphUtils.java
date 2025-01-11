@@ -6,28 +6,23 @@ import us.hassu.graphs.graph.AbstractGraph;
 import us.hassu.graphs.graph.Edge;
 import us.hassu.graphs.graph.Graph;
 import us.hassu.graphs.graph.Node;
+
 import us.hassu.graphs.trace.BfsFrame;
 import us.hassu.graphs.trace.BfsTrace;
 
 import java.util.*;
 
 public class GraphUtils<T extends Node> {
-
-    private static GraphUtils INSTANCE;
-
     @Setter
     @Getter
     boolean debug;
 
-    private GraphUtils(boolean debug) {
-        this.debug = debug;
+    public GraphUtils() {
+        this(false);
     }
 
-    public static <T extends Node> GraphUtils<T> getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new GraphUtils<>(false);
-        }
-        return INSTANCE;
+    GraphUtils(boolean debug) {
+        this.debug = debug;
     }
 
     public List<T> breadthFirstSearch(Graph<T> graph, T start, T end) {
@@ -63,8 +58,8 @@ public class GraphUtils<T extends Node> {
         }
     }
 
-    public BfsTrace bfsTrace(Graph<T> graph, T start, T end) {
-        BfsTrace trace = new BfsTrace();
+    public BfsTrace<T> bfsTrace(Graph<T> graph, T start, T end) {
+        BfsTrace<T> trace = new BfsTrace<>();
 
         ArrayDeque<T> queue = new ArrayDeque<>();
         Set<T> visited = new HashSet<>();
@@ -91,7 +86,7 @@ public class GraphUtils<T extends Node> {
                     newlyQueued.add(neighbor);
                 }
             }
-            BfsFrame frame = new BfsFrame(current, newlyQueued);
+            BfsFrame<T> frame = new BfsFrame<T>(current, newlyQueued);
             trace.getTrace().add(frame);
         }
 
@@ -140,7 +135,7 @@ public class GraphUtils<T extends Node> {
         }
     }
 
-    boolean hasCycle(AbstractGraph<T> graph) {
+    public boolean hasCycle(AbstractGraph<T> graph) {
         for (T node : graph.keySet()) {
             Set<T> visited = new HashSet<>();
             Stack<T> stack = new Stack<>();
@@ -212,6 +207,69 @@ public class GraphUtils<T extends Node> {
         Collections.reverse(path);
         return path;
     }
+
+//    public String drawMaze(Maze maze) {
+//        return drawMaze(
+//                maze.getGrid(),
+//                maze.getHeight(),
+//                maze.getWidth(),
+//                maze.getEntrance(),
+//                maze.getExit(),
+//                maze.isTopEntrance()
+//        );
+//    }
+//
+//    String drawMaze(List<List<MazeNode>> grid, int height, int width,
+//                         MazeNode entrance, MazeNode exit, boolean isTopEntrance) {
+//        StringBuilder mazeRepresentation = new StringBuilder();
+//
+//        // Draw the top boundary
+//        for (int col = 0; col < width; col++) {
+//            if (isTopEntrance && col == entrance.getCol()) {
+//                mazeRepresentation.append("+   ");
+//            } else {
+//                mazeRepresentation.append("+---");
+//            }
+//        }
+//        mazeRepresentation.append("+\n");
+//
+//        for (int row = 0; row < height; row++) {
+//            StringBuilder topRow = new StringBuilder("|");
+//            StringBuilder bottomRow = new StringBuilder("+");
+//
+//            for (int col = 0; col < width; col++) {
+//                MazeNode cell = grid.get(row).get(col);
+//                Set<MazeNode.Boundary> boundaries = cell.getBoundaries();
+//
+//                // Check if this is the entrance or exit
+//                if (row == entrance.getRow() && col == entrance.getCol()) {
+//                    topRow.append(" E ");
+//                } else if (row == exit.getRow() && col == exit.getCol()) {
+//                    topRow.append(" X ");
+//                } else {
+//                    topRow.append("   ");
+//                }
+//
+//                if (boundaries.contains(MazeNode.Boundary.RIGHT)) {
+//                    topRow.append("|");
+//                } else {
+//                    topRow.append(" ");
+//                }
+//
+//                if (boundaries.contains(MazeNode.Boundary.BOTTOM)) {
+//                    bottomRow.append("---+");
+//                } else {
+//                    bottomRow.append("   +");
+//                }
+//            }
+//
+//            mazeRepresentation.append(topRow).append("\n");
+//            mazeRepresentation.append(bottomRow).append("\n");
+//        }
+//
+//        return mazeRepresentation.toString();
+////        System.out.println(mazeRepresentation);
+//    }
 
     private void debugLog(String msg) {
         if (debug) {

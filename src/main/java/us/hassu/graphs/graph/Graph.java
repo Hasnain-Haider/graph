@@ -8,7 +8,7 @@ public interface Graph<T extends Node> {
 
     List<? extends T> getAdjacentNodes(T node);
 
-    List<? extends Edge> getEdgesFrom(T node);
+    List<? extends Edge<T>> getEdgesFrom(T node);
 
     void print();
 }
